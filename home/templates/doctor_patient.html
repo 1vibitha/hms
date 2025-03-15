@@ -1,0 +1,122 @@
+{% extends 'doctor_base.html' %}
+{% block content %}
+
+<br><br>
+<br><br><br><br><br>
+<br><br><br><br>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+
+  <style type="text/css">
+    a:link {
+      text-decoration: none;
+    }
+
+    .order-card {
+      width: 100%;
+      height: 250px; /* Uniform size */
+      padding: 30px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: 0.3s ease-in-out;
+    }
+
+    .order-card:hover {
+      transform: scale(1.05);
+    }
+
+    .order-card h6 {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: white;
+    }
+
+    .order-card h2 {
+      font-size: 1rem;
+      color: white;
+    }
+
+    .order-card i {
+      font-size: 3rem;
+      color: white;
+    }
+
+    .bg-c-blue {
+      background: linear-gradient(45deg, #6C88C4, #6C88C4);
+    }
+
+    .bg-c-pink {
+      background: linear-gradient(45deg, #A7ABDE, #A7ABDE);
+    }
+
+    .bg-c-yellow {
+      background: linear-gradient(45deg, #93B0AC, #93B0AC);
+    }
+
+    .card {
+      border-radius: 5px;
+      box-shadow: 0 1px 2.94px 0.06px rgba(4, 26, 55, 0.16);
+      border: none;
+      margin-bottom: 30px;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .card .card-block {
+      padding: 25px;
+    }
+  </style>
+</head>
+
+<div class="container">
+  <div class="row">
+    <!-- Doctor's Patient Record -->
+    <div class="col-md-6 col-xl-6">
+      <div class="card bg-c-blue order-card">
+        <div class="card-block">
+          <a href="/doctor-view-patient">
+            <h6 class="m-b-20">Your Patient Record</h6>
+          </a>
+          <h2 class="text-center"><i class="fas fa-user-injured"></i></h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- Discharged Patient -->
+    <div class="col-md-6 col-xl-6">
+      <div class="card bg-c-pink order-card">
+        <div class="card-block">
+          <a href="/doctor-view-discharge-patient">
+            <h6 class="m-b-20">Your Discharged Patients</h6>
+          </a>
+          <h2 class="text-center"><i class="fas fa-eject"></i></h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Centered Approve Patient Card -->
+  <div class="row d-flex justify-content-center">
+    <div class="col-md-6 col-xl-6">
+      <div class="card bg-c-yellow order-card">
+        <div class="card-block text-center">
+          <a href="/doctor-approve-patient">
+            <h6 class="m-b-20">Approve Patient</h6>
+          </a>
+          <br>
+          <h2><i class="fas fa-check-circle"></i></h2>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<br><br><br><br><br><br><br>
+{% endblock content %}
+

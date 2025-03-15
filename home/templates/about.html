@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+       <!-- about section start -->
+      <div class="about_section layout_padding margim_90">
+         <div class="container">
+            <div class="row">
+               <div class="col-md-6">
+                  <h1 class="about_taital">About Hospital</h1>
+                  <p class="about_text"> has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors  has a more-or-less normal distribution of letters, as o</p>
+                  <div class="about_bt"><a href="#">Read More</a></div>
+               </div>
+               <div class="col-md-6">
+                  <div class="about_img"><img src="{% static 'images/about-img.png' %}"></div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- about section end -->
+      {% endblock content %}
+  

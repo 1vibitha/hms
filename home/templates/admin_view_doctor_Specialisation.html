@@ -1,0 +1,108 @@
+{% extends 'admin_base.html' %}
+{% block content %}
+
+<head>
+  {% comment %} <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> {% endcomment %}
+
+  <style>
+    body {
+      font-family: 'Lato', sans-serif;
+    }
+
+
+    h2 {
+      font-family:'Georgia',Serif;
+      font-size: 40px;
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .responsive-table li {
+      border-radius: 3px;
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    .table-header {
+      background-color:rgb(33, 206, 229); /* Blue header */
+      color: white;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      font-weight: bold;
+    }
+
+    .table-row {
+      background-color: #ffffff;
+      box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1);
+      transition: 0.3s;
+    }
+
+    .table-row:hover {
+      background-color: #f0f8ff;
+    }
+
+    .col-1 {
+      flex-basis: 30%;
+      font-weight: bold;
+    }
+
+    .col-2 {
+      flex-basis: 40%;
+    }
+
+    .col-3 {
+      flex-basis: 30%;
+      text-align: right;
+    }
+
+    @media all and (max-width: 767px) {
+      .table-header {
+        display: none;
+      }
+
+      .table-row {
+        display: block;
+      }
+
+      .col {
+        flex-basis: 100%;
+        display: flex;
+        padding: 10px 0;
+      }
+
+      .col:before {
+        color:rgb(73, 204, 224);
+        padding-right: 10px;
+        content: attr(data-label);
+        font-weight: bold;
+        flex-basis: 40%;
+        text-align: right;
+      }
+    }
+  </style>
+</head>
+<br><br><br><br><br>
+<br><br><br><br><br>
+<div class="container">
+  <h2><b>Department & Doctors</b></h2>
+  <ul class="responsive-table">
+    <li class="table-header">
+      <div class="col col-1">Department</div>
+      <div class="col col-2">Doctor Name</div>
+      <div class="col col-3">Mobile</div>
+    </li>
+    
+    {% for d in doctors %}
+    <li class="table-row">
+      <div class="col col-1" data-label="Department">{{ d.department }}</div>
+      <div class="col col-2" data-label="Doctor Name">{{ d.get_name }}</div>
+      <div class="col col-3" data-label="Mobile">{{ d.mobile }}</div>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+
+{% endblock content %}

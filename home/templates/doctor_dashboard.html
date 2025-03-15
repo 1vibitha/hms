@@ -1,0 +1,47 @@
+{% extends "doctor_base.html" %}
+{% load static %}
+{% block content %}
+{% include 'doctor_dashboard_cards.html' %}  
+<br><br><br><br><br>
+<br><br><br><br>
+
+<div class="container-fluid" style="width: 100%; margin: auto;"> <!-- Increased width -->
+  <div class="row">
+    <div class="panel panel-primary" style="margin: auto; width: 98%;"> <!-- Increased width -->
+      <div class="panel-heading" style="text-align:center; background-color: #0cb7d6; font-size: 3.2em; padding: 20px;">
+        <h6 class="panel-title">Recent Appointments For You</h6>
+      </div>
+      <table class="table table-hover table-bordered" id="dev-table" 
+             style="width: 100%; font-size: 1.4em; table-layout: auto;"> <!-- Adjusted width -->
+        <thead style="background-color: #f2f2f2;">
+          <tr>
+            <th style="text-align: center; width: 15%;">Patient Name</th>
+            <th style="text-align: center; width: 10%;">Picture</th>
+            <th style="text-align: center; width: 25%;">Description</th>
+            <th style="text-align: center; width: 10%;">Mobile</th>
+            <th style="text-align: center; width: 15%;">Address</th>
+            <th style="text-align: center; width: 10%;">Date</th>
+            <th style="text-align: center; width: 15%;">Time Slot</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a, p in appointments %}
+          <tr>
+            <td style="vertical-align: middle; text-align: center;">{{ a.patientName }}</td>
+            <td style="vertical-align: middle; text-align: center;">
+              <img src="{{ p.profile_pic.url }}" alt="Profile Pic" height="80px" width="80px" style="border-radius: 50%;" />
+            </td>
+            <td style="vertical-align: middle; text-align: center;">{{ a.description }}</td>
+            <td style="vertical-align: middle; text-align: center;">{{ p.mobile }}</td>
+            <td style="vertical-align: middle; text-align: center;">{{ p.address }}</td>
+            <td style="vertical-align: middle; text-align: center;">{{ a.appointmentDate }}</td>
+            <td style="vertical-align: middle; text-align: center;">{{ a.time_slot }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<br><br><br><br><br>
+{% endblock content %}

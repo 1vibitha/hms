@@ -1,0 +1,135 @@
+{% extends 'doctor_base.html' %}
+{% block content %}
+{% load static %}
+
+<br><br><br>
+
+<head>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    a {
+      text-decoration: none;
+    }
+
+    .patients_taital {
+      text-align: center;
+      font-size: 4.5rem;
+      font-weight: bold;
+      margin-bottom: 30px;
+      color: white;
+    }
+
+    .appointment-card-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .appointment-card {
+      color: black;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      transition: 0.3s ease-in-out;
+      height: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 100%;
+    }
+
+    .appointment-card:hover {
+      transform: scale(1.05);
+    }
+
+    .bg-c-blue {
+      background: linear-gradient(45deg, #6C88C4, #6C88C4);
+    }
+
+    .bg-c-green {
+      background: linear-gradient(45deg, #82B2C0, #82B2C0);
+    }
+
+    .bg-c-yellow {
+      background: linear-gradient(45deg, #93B0AC, #93B0AC);
+    }
+
+    .bg-c-pink {
+      background: linear-gradient(45deg, #A7ABDE, #A7ABDE);
+    }
+
+    .appointment-info {
+      text-align: center;
+      flex-grow: 1;
+      padding: 10px 0;
+      color: black;
+    }
+
+    .appointment-info h4 {
+      font-size: 3rem;
+      margin-bottom: 5px;
+    }
+
+    .appointment-info p {
+      font-size: 1.7rem;
+      margin-bottom: 5px;
+    }
+
+    .patient-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .patient-buttons a i {
+      font-size: 2rem;
+      color: white;
+      transition: 0.3s ease-in-out;
+    }
+
+    .patient-buttons a:hover i {
+      color: #f8f9fa;
+      transform: scale(1.2);
+    }
+  </style>
+</head>
+
+<div class="doctores_section margim_90">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h1 class="patients_taital">Doctor's Appointments</h1>
+      </div>
+    </div>
+
+    {% if appointments %}
+    <div class="row appointment-card-container">
+      {% for a in appointments %}
+      <div class="col-md-4 col-lg-4 mb-4 d-flex align-items-stretch"> <!-- Ensures 3 per row -->
+        <div class="appointment-card {% cycle 'bg-c-blue' 'bg-c-green' 'bg-c-yellow' 'bg-c-pink' %} w-100">
+          <div class="appointment-info">
+            <h4><b>Patient: {{ a.patientName }}</b></h4>
+            <p><strong>Description:</strong> {{ a.description }}</p>
+            <p><strong>Appointment Date:</strong> {{ a.appointmentDate }}</p>
+          </div>
+          <div class="patient-buttons">
+            <a class="btn btn-danger btn-md" href="#">
+              <i class="fa fa-trash"></i> 
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <br><br><br>
+    <h4 style="text-align: center; color: red;">No Appointments Found</h4>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock content %}

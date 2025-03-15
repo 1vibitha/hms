@@ -1,0 +1,94 @@
+{% extends 'admin_base.html' %}
+{% block content %}
+
+<div class="banner_section layout_padding"></div>
+<br><br><br>
+
+<div class="appointment_section">
+    <div class="container d-flex justify-content-center">
+        <div class="appointment_box" style="width: 800px;">
+            <h1 class="appointment_taital text-center mb-4">Book <span style="color: #0cb7d6;">Appointment</span></h1>
+<!-- Display Messages -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %} text-center">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<!-- Form Starts -->
+<form method="post">
+    {% csrf_token %}
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label for="id_doctorId">Select Doctor</label>
+            <div style="padding-bottom: 5px;">
+                {{ appointmentForm.doctorId }}
+            </div>
+            {% for error in appointmentForm.doctorId.errors %}
+                <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="col-md-6">
+            <label for="id_patientId">Select Patient</label>
+            <div style="padding-bottom: 5px;">
+                {{ appointmentForm.patientId }}
+            </div>
+            {% for error in appointmentForm.patientId.errors %}
+                <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label for="id_appointmentDate">Select Date</label>
+            <div style="padding-bottom: 5px;">
+                {{ appointmentForm.appointmentDate }}
+            </div>
+            {% for error in appointmentForm.appointmentDate.errors %}
+                <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="col-md-6">
+            <label for="id_time_slot">Select Time Slot</label>
+            <div style="padding-bottom: 5px;">
+                {{ appointmentForm.time_slot }}
+            </div>
+            {% for error in appointmentForm.time_slot.errors %}
+                <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Centered Description Field -->
+    <div class="row mb-3 justify-content-center">
+        <div class="col-md-8 text-center">
+            <label for="id_description" class="d-block">Description</label>
+            <textarea id="id_description" name="description" class="form-control mx-auto" 
+                style="width: 100%; height: 80px; resize: none; text-align: center;">
+                {{ appointmentForm.description.value|default:"" }}
+            </textarea>
+        </div>
+    </div>
+
+    <br>
+
+    <!-- Submit Button -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <button type="submit" class="btn btn-outline-info btn-lg" style="padding: 10px 25px; font-size: 18px;">Book Appointment</button>
+        </div>
+    </div>
+</form>
+
+     
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

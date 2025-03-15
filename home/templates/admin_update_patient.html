@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="banner_section layout_padding"></div>
+<br><br><br>
+
+<div class="appointment_section">
+    <div class="container d-flex justify-content-center">
+        <div class="appointment_box" style="width: 800px;">
+            <h1 class="appointment_taital text-center mb-4">Update <span style="color: #0cb7d6;">Patient Details</span></h1>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %} text-center">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% if userForm.non_field_errors %}
+                <div class="alert alert-danger">
+                    {% for error in userForm.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if patientForm.non_field_errors %}
+                <div class="alert alert-danger">
+                    {% for error in patientForm.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="id_first_name">First Name</label>
+                        {{ userForm.first_name }}
+                        {% if userForm.first_name.errors %}
+                            <div class="text-danger small">{{ userForm.first_name.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="id_last_name">Last Name</label>
+                        {{ userForm.last_name }}
+                        {% if userForm.last_name.errors %}
+                            <div class="text-danger small">{{ userForm.last_name.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="id_username">Username</label>
+                        {{ userForm.username }}
+                        {% if userForm.username.errors %}
+                            <div class="text-danger small">{{ userForm.username.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="id_password">Password</label>
+                        {{ userForm.password }}
+                        {% if userForm.password.errors %}
+                            <div class="text-danger small">{{ userForm.password.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="id_mobile">Mobile</label>
+                        {{ patientForm.mobile }}
+                        {% if patientForm.mobile.errors %}
+                            <div class="text-danger small">{{ patientForm.mobile.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="id_assignedDoctorId">Select Doctor</label>
+                        {{ patientForm.assignedDoctorId }}
+                        {% if patientForm.assignedDoctorId.errors %}
+                            <div class="text-danger small">{{ patientForm.assignedDoctorId.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                 <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="id_appointmentDate">Appointment Date</label>
+                        {{ patientForm.appointmentDate }}
+                        {% if patientForm.appointmentDate.errors %}
+                            <div class="text-danger small">{{ patientForm.appointmentDate.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="id_time_slot">Time Slot</label>
+                        {{ patientForm.time_slot }}
+                        {% if patientForm.time_slot.errors %}
+                            <div class="text-danger small">{{ patientForm.time_slot.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="id_symptoms">Symptoms</label>
+                        {{ patientForm.symptoms }}
+                        {% if patientForm.symptoms.errors %}
+                            <div class="text-danger small">{{ patientForm.symptoms.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="id_address">Address</label>
+                        {{ patientForm.address }}
+                        {% if patientForm.address.errors %}
+                            <div class="text-danger small">{{ patientForm.address.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-3 text-center">
+                    <label for="id_profile_pic">Profile Picture</label>
+
+                    {% if patientForm.instance.profile_pic %}
+                        <div class="mb-2">
+                            <img src="{{ patientForm.instance.profile_pic.url }}" alt="Profile Picture"
+                                 class="img-thumbnail" style="width: 150px; height: 150px;">
+                        </div>
+                    {% endif %}
+
+                    <input type="file" name="profile_pic" class="form-control">
+
+                    {% if patientForm.profile_pic.errors %}
+                        <div class="text-danger small">{{ patientForm.profile_pic.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <br>
+
+                <div class="row mb-4">
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-outline-info btn-lg" style="padding: 10px 25px; font-size: 18px;">
+                            Update Details
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

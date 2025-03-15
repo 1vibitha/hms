@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<br><br><br><br><br><br><br><br>
+<style>
+  .centered-content {
+   
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Full screen height */
+    margin: 0; /* Remove any default margins */
+  }
+  .jumbotron {
+    text-align: center;
+  }
+</style>
+
+<div class="centered-content"  style="margin-bottom: 0px;margin-left: 300px; width: 50%">
+  <div class="jumbotron">
+    <h1 class="display-4">Hello, Patient</h1>
+    <p class="lead">Welcome to Hospital Management System.</p>
+    <hr class="my-4">
+    <p>You can access various features after Login/SignUp.</p>
+    <p class="lead">
+      <a class="btn btn-outline-info btn-lg" href="/patientsignup" role="button">Register Your Account</a>
+      <a class="btn btn-outline-info btn-lg" href="/patientlogin" role="button">Login</a>
+    </p>
+  </div>
+</div>
+
+{% endblock content %}
+{% comment %} {% extends 'base.html' %}
+
+
+{% block content %}
+
+<br>
+<br>
+
+<div class="jumbotron" style="margin-bottom:0px;">
+  <h1 class="display-4" style="text-align:center;">Hello, Patient</h1>
+  <p class="lead">Welcome to Hospital Management System.</p>
+  <hr class="my-4">
+  <p>You can access various features after Login/SignUp.</p>
+  <p class="lead">
+    <a class="btn btn-primary btn-lg" href="/patientsignup" role="button">Register Your Account</a>
+    <a class="btn btn-primary btn-lg" href="/patientlogin" role="button">Login</a>
+  </p>
+</div>
+
+{% endblock content %} {% endcomment %}

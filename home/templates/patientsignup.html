@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="banner_section layout_padding"></div>
+<br><br><br>
+
+<div class="appointment_section">
+    <div class="container d-flex justify-content-center">
+        <div class="appointment_box" style="width: 800px;">
+            <h1 class="appointment_taital text-center mb-4">Patient <span style="color: #0cb7d6;">Signup</span></h1>
+
+            <!-- Display Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %} text-center">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Form Starts -->
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- User Information Section -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="id_first_name">First Name</label>
+                        <div style="padding-bottom: 5px;">
+                            {{ userForm.first_name }}
+                        </div>
+                        {% for error in userForm.first_name.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="id_last_name">Last Name</label>
+                        <div style="padding-bottom: 5px;">
+                            {{ userForm.last_name }}
+                        </div>
+                        {% for error in userForm.last_name.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="id_username">Username</label>
+                        <div style="padding-bottom: 5px;">
+                            {{ userForm.username }}
+                        </div>
+                        {% for error in userForm.username.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="id_password">Password</label>
+                        <div style="padding-bottom: 5px;">
+                            {{ userForm.password }}
+                        </div>
+                        {% for error in userForm.password.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Patient Profile Section -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="id_mobile">Mobile</label>
+                        <div style="padding-bottom: 5px;">
+                            {{ patientForm.mobile }}
+                        </div>
+                        {% for error in patientForm.mobile.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="id_assignedDoctorId">Select Doctor</label>
+                        <div style="padding-bottom: 5px;">
+                            {{ patientForm.assignedDoctorId }}
+                        </div>
+                        {% for error in patientForm.assignedDoctorId.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="id_symptoms">Symptoms</label>
+                        <div style="padding-bottom: 5px;">
+                            {{ patientForm.symptoms }}
+                        </div>
+                        {% for error in patientForm.symptoms.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="id_address">Address</label>
+                        <div style="padding-bottom: 5px;">
+                            {{ patientForm.address }}
+                        </div>
+                        {% for error in patientForm.address.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Doctor Selection & Appointment -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="id_appointmentDate">Select Appointment Date</label>
+                        <div style="padding-bottom: 5px;">
+                            {{ patientForm.appointmentDate }}
+                        </div>
+                        {% for error in patientForm.appointmentDate.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="id_time_slot">Select Time Slot</label>
+                        <div style="padding-bottom: 5px;">
+                            {{ patientForm.time_slot }}
+                        </div>
+                        {% for error in patientForm.time_slot.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Profile Picture Upload -->
+                <div class="mb-3 text-center">
+                    <label for="id_profile_pic">Profile Picture</label>
+                    <div style="padding-bottom: 5px;">
+                        {{ patientForm.profile_pic }}
+                    </div>
+                    {% for error in patientForm.profile_pic.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <br>
+
+                <!-- Submit Button -->
+                <div class="row mb-4">
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-outline-info btn-lg" style="padding: 10px 25px; font-size: 18px;">
+                            Sign Up
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

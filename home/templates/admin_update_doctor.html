@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="banner_section layout_padding"></div>
+<br><br><br>
+
+<div class="appointment_section">
+    <div class="container d-flex justify-content-center">
+        <div class="appointment_box" style="width: 800px;">
+            <!-- Page Title -->
+            <h1 class="appointment_taital text-center mb-4">
+                Doctor <span style="color: #0cb7d6;">Update</span>
+            </h1>
+
+            <!-- Display Success/Error Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %} text-center">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data" style="padding: 20px;">
+                {% csrf_token %}
+
+                <!-- Username & Email -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Username</label>
+                        <div>{{ userForm.username }}</div>
+                        {% if userForm.username.errors %}
+                            <div class="text-danger small">{{ userForm.username.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email Address</label>
+                        <div>{{ userForm.email }}</div>
+                        {% if userForm.email.errors %}
+                            <div class="text-danger small">{{ userForm.email.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- First Name & Last Name -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">First Name</label>
+                        <div>{{ userForm.first_name }}</div>
+                        {% if userForm.first_name.errors %}
+                            <div class="text-danger small">{{ userForm.first_name.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Last Name</label>
+                        <div>{{ userForm.last_name }}</div>
+                        {% if userForm.last_name.errors %}
+                            <div class="text-danger small">{{ userForm.last_name.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Password Field (Hidden to avoid unnecessary changes) -->
+                <input type="hidden" name="password" value="{{ userForm.password.value }}">
+
+                <!-- Department & Mobile -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Department</label>
+                        <div>{{ doctorForm.department }}</div>
+                        {% if doctorForm.department.errors %}
+                            <div class="text-danger small">{{ doctorForm.department.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Mobile</label>
+                        <div>{{ doctorForm.mobile }}</div>
+                        {% if doctorForm.mobile.errors %}
+                            <div class="text-danger small">{{ doctorForm.mobile.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Address -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Address</label>
+                        <textarea name="address" class="form-control" rows="3" maxlength="40" required>{{ doctorForm.address.value|default:"" }}</textarea>
+                        {% if doctorForm.address.errors %}
+                            <div class="text-danger small">{{ doctorForm.address.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Experience & Profile Picture -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Years of Experience</label>
+                        <div>{{ doctorForm.experience }}</div>
+                        {% if doctorForm.experience.errors %}
+                            <div class="text-danger small">{{ doctorForm.experience.errors|join:", " }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Profile Picture</label>
+                  
+                      <!-- Show the current image if it exists -->
+                      {% if doctorForm.instance.profile_pic %}
+                          <br>
+                          <img src="{{ doctorForm.instance.profile_pic.url }}" alt="Profile Picture" width="100">
+                          <br><br>
+                      {% endif %}
+                  
+                      <!-- File input for uploading a new image -->
+                      <input type="file" name="profile_pic" class="form-control">
+                  
+                      {% if doctorForm.profile_pic.errors %}
+                          <div class="text-danger small">{{ doctorForm.profile_pic.errors|join:", " }}</div>
+                      {% endif %}
+                  </div>
+                  
+                  
+                </div>
+
+                <br>
+
+                <!-- Update Button -->
+                <div class="row mb-4">
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-outline-success btn-lg" style="padding: 10px 25px; font-size: 18px;">
+                            Update Doctor
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

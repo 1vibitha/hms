@@ -1,0 +1,73 @@
+{% extends "patient_base.html" %}
+{% block content %}
+
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>LazyCoder || sumit</title>
+
+{% comment %} 
+  <style media="screen">
+    .jumbotron {
+      margin-top: 0px;
+      margin-bottom: 0px;
+    }
+
+    .jumbotron h1 {
+      text-align: center;
+    }
+
+    .alert {
+      margin: 0px;
+    }
+  </style> {% endcomment %}
+
+</head>
+
+<body>
+  
+ <!-- header section start -->
+
+    <!-- header section end -->
+    <!-- banner section start --> 
+   <br><br><br>
+    <div class="banner_section layout_padding">
+      <!-- banner section end -->
+   </div>
+   <br><br><br>
+   
+   <!-- header section end -->
+   <!-- appointment section start -->
+<div class="appointment_section">
+    <div class="container">
+        <center>
+            <div class="appointment_box d-flex flex-column justify-content-center align-items-center">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1 class="appointment_taital">Hello <span style="color: #0cb7d6;"> {{request.user.first_name}}</span></h1>
+                    </div>
+                </div>
+                <div class="appointment_section_2">
+                  <p class="lead">Your Account is not approved till now <br><br>Our Team is checking your profile <br><br> Soon your account will be confirmed !!!</p>
+    <hr class="my-4">
+    <p>Check Later</p>
+    <p class="lead">
+      
+      <a class="btn btn-outline-info btn-lg" style="padding: 10px 25px; font-size: 18px;" href="/logout" role="button">Logout For Now</a>
+    </p>
+                    
+                </div>
+            </div>
+        </center>
+    </div>
+</div>
+
+ 
+  <br>
+  <br>
+
+ 
+</body>
+
+{% endblock content %}

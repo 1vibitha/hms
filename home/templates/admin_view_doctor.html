@@ -1,0 +1,165 @@
+{% extends 'admin_base.html' %}
+{% block content %}
+{% load static %}
+
+<br><br><br>
+
+<head>
+  <!-- Correct Font Awesome Version for Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+
+  <style>
+    a {
+      text-decoration: none;
+    }
+
+    .doctores_taital {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 30px;
+      color: white;
+    }
+
+    .doctor-card {
+      color: black;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      transition: 0.3s ease-in-out;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .doctor-card:hover {
+      transform: scale(1.05);
+    }
+
+    .doctor-image img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 3px solid white;
+      object-fit: cover;
+      margin-bottom: 10px;
+    }
+
+    .doctor-info {
+      text-align: center;
+      flex-grow: 1;
+      padding: 10px 0;
+    }
+
+    .doctor-info h4 {
+      font-size: 1.5rem;
+      margin-bottom: 5px;
+    }
+
+    .doctor-info p {
+      font-size: 1rem;
+      margin-bottom: 5px;
+    }
+
+    .doctor-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    /* Fix for Icons */
+    .doctor-buttons a i {
+      font-size: 1.5rem;  /* Increase size */
+      color: white;  /* Ensure color is set */
+      transition: 0.3s ease-in-out;
+    }
+
+    .doctor-buttons a:hover i {
+      color: #f8f9fa;
+      transform: scale(1.2);
+    }
+
+    /* Background Colors */
+    .bg-c-blue {
+      background: linear-gradient(45deg, #6C88C4, #6C88C4);
+    }
+
+    .bg-c-green {
+      background: linear-gradient(45deg, #82B2C0, #82B2C0);
+    }
+
+    .bg-c-yellow {
+      background: linear-gradient(45deg, #93B0AC, #93B0AC);
+    }
+
+    .bg-c-pink {
+      background: linear-gradient(45deg, #A7ABDE, #A7ABDE);
+    }
+
+    .badge {
+      font-size: 0.9rem;
+      padding: 5px 10px;
+      border-radius: 5px;
+      margin-top: 5px;
+      display: inline-block;
+    }
+
+
+    /* Ensure equal card heights */
+    .doctor-card-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .doctor-card-container .col-md-6,
+    .doctor-card-container .col-xl-4 {
+      display: flex;
+    }
+
+  </style>
+</head>
+
+<!-- Doctors Section -->
+<div class="doctores_section margim_90">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h1 class="doctores_taital">Our Doctors</h1>
+      </div>
+    </div>
+
+    <div class="row doctor-card-container">
+      {% for d in doctors %}
+      <div class="col-md-6 col-xl-4 mb-4 d-flex">
+        <div class="card doctor-card {% cycle 'bg-c-blue' 'bg-c-green' 'bg-c-yellow' 'bg-c-pink' %} w-100">
+          <div class="doctor-image">
+            <img src="{{ d.profile_pic.url }}" alt="Doctor Image">
+          </div>
+          <div class="doctor-info">
+            <h4><b>{{ d.get_name }}</b></h4>
+            <p><strong><b>Department:</b></strong> {{ d.department }}</p>
+            <p><strong><b>Mobile:</b></strong> {{ d.mobile }}</p>
+            <p><strong><b>Address:</b></strong> {{ d.address }}</p>
+            <p><strong><b>Department:</b></strong> {{ d.department }}</p>
+            
+          </div>
+          <div class="doctor-buttons">
+          <a href="{% url 'update-doctor' d.id %}" title="Edit">
+              <i class="fas fa-edit"></i>
+            </a>
+            <a href="{% url 'delete-doctor-from-hospital' d.id %}" title="Delete">
+              <i class="fas fa-trash"></i>
+            </a> 
+           
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

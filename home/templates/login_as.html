@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<!-- doctores section start -->
+<div class="doctores_section margim_90">
+    <div class="container">
+       <div class="row">
+          <div class="col-md-12">
+             <h1 class="doctores_taital">Our doctores</h1>
+          </div>
+       </div>
+       <div class="doctores_section_2">
+          <div id="my_slider" class="carousel slide" data-ride="carousel">
+             <div class="carousel-inner">
+                <div class="carousel-item active">
+                   <div class="row">
+                      <div class="col-md-4">
+                         <div class="doctores_box">
+                            <div class="image_1"><img src="{% static 'images/admin.jpg' %}"></div>
+                            <h4 class="humour_text">Admin<br><span class="mbbs_text"><a href= "{% url 'adminlogin' %}" >Login</a></span></h4>
+                         </div>
+                      </div>
+                      <div class="col-md-4">
+                         <div class="doctores_box">
+                            <div class="image_1"><img src="{% static 'images/doctor (3).jpg' %}"></div>
+                            <h4 class="humour_text"> Doctor<br><span class="mbbs_text"><a href= "{% url 'doctorclick' %}" >Login</a></span></h4>
+                        
+                         </div>
+                      </div>
+                      <div class="col-md-4">
+                         <div class="doctores_box">
+                            <div class="image_1"><img src="{% static 'images/patient.png' %}"></div>
+                            <h4 class="humour_text">Patient<br><span class="mbbs_text"><a href= "{% url 'patientclick' %}" >Login</a></span></h4>
+                            
+                         </div>
+                      </div>
+                   </div>
+                </div>
+                
+                   </div>
+                </div>
+             
+       </div>
+    </div>
+ </div>
+
+
+
+
+
+{% endblock content %}

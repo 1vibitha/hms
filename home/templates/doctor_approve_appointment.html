@@ -1,0 +1,58 @@
+{% extends 'doctor_base.html' %}
+{% block content %}
+{% load static %}
+
+<head>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <style>
+        a { text-decoration: none; }
+        .patients_taital { text-align: center; font-size: 2rem; font-weight: bold; margin-bottom: 30px; color: #fff; }
+        .patient-card { color: black; border-radius: 10px; padding: 20px; text-align: center; transition: 0.3s ease-in-out; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+        .patient-card:hover { transform: scale(1.05); }
+        .patient-image img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid black; object-fit: cover; margin-bottom: 10px; }
+        .patient-info { text-align: center; flex-grow: 1; padding: 10px 0; }
+        .patient-info h4 { font-size: 1.6rem; margin-bottom: 5px; color: black; font-weight: bold; }
+        .patient-info p { font-size: 1rem; margin-bottom: 5px; }
+        .patient-buttons { display: flex; justify-content: center; gap: 15px; margin-top: 10px; }
+        .approve-icon i { font-size: 1.5rem; color: rgb(51, 111, 231); transition: 0.3s ease-in-out; }
+        .reject-icon i { font-size: 1.5rem; color: rgb(134, 17, 4); transition: 0.3s ease-in-out; }
+        .approve-icon:hover i, .reject-icon:hover i { transform: scale(1.2); }
+    </style>
+</head>
+
+<div class="doctores_section margim_90">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h1 class="patients_taital">Patients Pending Approval</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            {% for p in patients %}
+            <div class="col-md-6 col-xl-4 mb-4 d-flex">
+                <div class="card patient-card">
+                    <div class="patient-image">
+                        <img src="{{ p.profile_pic.url }}" alt="Patient Image">
+                    </div>
+                    <div class="patient-info">
+                        <h4><b>{{ p.get_name }}</b></h4>
+                        <p><strong>Symptoms:</strong> {{ p.symptoms }}</p>
+                        <p><strong>Mobile:</strong> {{ p.mobile }}</p>
+                        <p><strong>Address:</strong> {{ p.address }}</p>
+                    </div>
+                    <div class="patient-buttons">
+                        <a href="{% url 'approve_patient' p.id %}" class="approve-icon" title="Approve">
+                            <i class="fas fa-check-circle"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center">No pending patients for approval.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

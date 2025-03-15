@@ -1,0 +1,209 @@
+{% extends 'admin_base.html' %}
+{% block content %}
+  
+<div class="banner_section layout_padding">
+</div>
+<br><br><br>
+<div class="appointment_section">
+   <div class="container d-flex justify-content-center">
+       <div class="appointment_box" style="width: 800px;">
+           <h1 class="appointment_taital text-center mb-4">Add New<span style="color: #0cb7d6;">Doctor</span></h1>
+           <form method="post" enctype="multipart/form-data" style="padding: 20px;">
+               {% csrf_token %}
+
+               <!-- Combined Information Section -->
+               <div class="row mb-3">
+                   <div class="col-md-6">
+                       <label for="id_username" class="form-label">Username</label>
+                       <div style="padding-bottom: 5px;">{{ user_form.username }}</div>
+                       {% if form_submitted and user_form.username.errors %}
+                           <div class="text-danger small">{{ user_form.username.errors|join:", " }}</div>
+                       {% endif %}
+                   </div>
+                   <div class="col-md-6">
+                       <label for="id_email" class="form-label">Email Address</label>
+                       <div style="padding-bottom: 5px;">{{ user_form.email }}</div>
+                       {% if form_submitted and user_form.email.errors %}
+                           <div class="text-danger small">{{ user_form.email.errors|join:", " }}</div>
+                       {% endif %}
+                   </div>
+               </div>
+
+               <div class="row mb-3">
+                   <div class="col-md-6">
+                       <label for="id_first_name" class="form-label">First Name</label>
+                       <div style="padding-bottom: 5px;">{{ user_form.first_name }}</div>
+                       {% if form_submitted and user_form.first_name.errors %}
+                           <div class="text-danger small">{{ user_form.first_name.errors|join:", " }}</div>
+                       {% endif %}
+                   </div>
+                   <div class="col-md-6">
+                       <label for="id_last_name" class="form-label">Last Name</label>
+                       <div style="padding-bottom: 5px;">{{ user_form.last_name }}</div>
+                       {% if form_submitted and user_form.last_name.errors %}
+                           <div class="text-danger small">{{ user_form.last_name.errors|join:", " }}</div>
+                       {% endif %}
+                   </div>
+               </div>
+
+               <div class="row mb-3">
+                   <div class="col-md-6">
+                       <label for="id_password" class="form-label">Password</label>
+                       <div style="padding-bottom: 5px;">{{ user_form.password }}</div>
+                       {% if form_submitted and user_form.password.errors %}
+                           <div class="text-danger small">{{ user_form.password.errors|join:", " }}</div>
+                       {% endif %}
+                   </div>
+                   <div class="col-md-6">
+                       <label for="id_department" class="form-label">Department</label>
+                       <div style="padding-bottom: 5px;">{{ doctor_form.department }}</div>
+                       {% if form_submitted and doctor_form.department.errors %}
+                           <div class="text-danger small">{{ doctor_form.department.errors|join:", " }}</div>
+                       {% endif %}
+                   </div>
+               </div>
+
+               <div class="row mb-3">
+                   <div class="col-md-6">
+                       <label for="id_mobile" class="form-label">Mobile</label>
+                       <div style="padding-bottom: 5px;">{{ doctor_form.mobile }}</div>
+                       {% if form_submitted and doctor_form.mobile.errors %}
+                           <div class="text-danger small">{{ doctor_form.mobile.errors|join:", " }}</div>
+                       {% endif %}
+                   </div>
+                   <div class="col-md-6">
+                       <label for="id_address" class="form-label">Address</label>
+                       <textarea id="id_address" name="address" class="form-control" rows="3" maxlength="40" required style="resize: none;">{{ doctor_form.address.value|default:"" }}</textarea>
+                       {% if form_submitted and doctor_form.address.errors %}
+                           <div class="text-danger small">{{ doctor_form.address.errors|join:", " }}</div>
+                       {% endif %}
+                   </div>
+               </div>
+
+               <div class="row mb-3">
+                   <div class="col-md-6">
+                       <label for="id_experience" class="form-label">Years of Experience</label>
+                       <div style="padding-bottom: 5px;">{{ doctor_form.experience }}</div>
+                       {% if form_submitted and doctor_form.experience.errors %}
+                           <div class="text-danger small">{{ doctor_form.experience.errors|join:", " }}</div>
+                       {% endif %}
+                   </div>
+                   <div class="col-md-6">
+                       <label for="id_profile_pic" class="form-label">Profile Picture</label>
+                       <div style="padding-bottom: 5px;">{{ doctor_form.profile_pic }}</div>
+                       {% if form_submitted and doctor_form.profile_pic.errors %}
+                           <div class="text-danger small">{{ doctor_form.profile_pic.errors|join:", " }}</div>
+                       {% endif %}
+                   </div>
+               </div>
+<br>
+               <!-- Submit Button -->
+               <div class="row mb-4">
+               <div class="col-12 text-center">
+                   <button type="submit" class="btn btn-outline-info btn-lg" style="padding: 10px 25px; font-size: 18px;">SignUp</button>
+                 </div>
+               </div>
+            
+           </form>
+       </div>
+   </div>
+</div>
+{% comment %} 
+<head>
+  <style media="screen">
+    a:link {
+      text-decoration: none;
+    }
+
+    .note {
+      text-align: center;
+      height: 80px;
+      background: -webkit-linear-gradient(left, #0072ff, #8811c5);
+      color: #fff;
+      font-weight: bold;
+      line-height: 80px;
+    }
+
+    .form-content {
+      padding: 5%;
+      border: 1px solid #ced4da;
+      margin-bottom: 2%;
+    }
+
+    .form-control {
+      border-radius: 1.5rem;
+    }
+
+    .btnSubmit {
+      border: none;
+      border-radius: 1.5rem;
+      padding: 1%;
+      width: 20%;
+      cursor: pointer;
+      background: #0062cc;
+      color: #fff;
+    }
+
+    .menu {
+      top: 50px;
+    }
+  </style>
+
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+</head>
+<br><br><br>
+<!------ signup page for doctor by admin(sumit)  ---------->
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="container register-form">
+    <div class="form">
+      <div class="note">
+        <p>Add New Doctor To Hospital</p>
+      </div>
+      <div class="form-content">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              {% render_field userForm.first_name class="form-control" placeholder="First Name" %}
+            </div>
+            <div class="form-group">
+              {% render_field userForm.username class="form-control" placeholder="Username" %}
+            </div>
+            <div class="form-group">
+              {% render_field doctorForm.department class="form-control" placeholder="Department" %}
+            </div>
+            <div class="form-group">
+              {% render_field doctorForm.address class="form-control" placeholder="Address" %}
+            </div>
+
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              {% render_field userForm.last_name class="form-control" placeholder="Last Name" %}
+            </div>
+            <div class="form-group">
+              {% render_field userForm.password class="form-control" placeholder="Password" %}
+            </div>
+            <div class="form-group">
+              {% render_field doctorForm.mobile class="form-control"  placeholder="Mobile" %}
+            </div>
+            <div class="form-group">
+              {% render_field doctorForm.profile_pic required="required" class="form-control" placeholder="Profile Picture" %}
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="btnSubmit">Register</button>
+      </div>
+    </div>
+  </div>
+
+</form>
+<!--
+developed By : sumit kumar
+facebook : fb.com/sumit.luv
+youtube : youtube.com/lazycoders
+--> {% endcomment %}
+{% endblock content %}

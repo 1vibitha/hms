@@ -1,0 +1,116 @@
+{% extends 'admin_base.html' %}
+{% block content %}
+
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Lato', sans-serif;
+    }
+
+    h2 {
+      font-family: 'Georgia', Serif;
+      font-size: 40px;
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .responsive-table li {
+      border-radius: 3px;
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    .table-header {
+      background-color: rgb(33, 206, 229);
+      color: white;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      font-weight: bold;
+    }
+
+    .table-row {
+      background-color: #ffffff;
+      box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1);
+      transition: 0.3s;
+    }
+
+    .table-row:hover {
+      background-color: #f0f8ff;
+    }
+
+    .col-1 {
+      flex-basis: 35%;
+      white-space: nowrap;
+      overflow: visible;
+      font-weight: bold;
+    }
+
+    .col-2 {
+      flex-basis: 25%;
+    }
+
+    .col-3 {
+      flex-basis: 25%;
+    }
+
+    .col-4 {
+      flex-basis: 15%;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    @media all and (max-width: 767px) {
+      .table-header {
+        display: none;
+      }
+
+      .table-row {
+        display: block;
+      }
+
+      .col {
+        flex-basis: 100%;
+        display: flex;
+        padding: 10px 0;
+      }
+
+      .col:before {
+        color: rgb(73, 204, 224);
+        padding-right: 10px;
+        content: attr(data-label);
+        font-weight: bold;
+        flex-basis: 40%;
+        text-align: right;
+      }
+    }
+  </style>
+</head>
+
+<br><br><br><br><br>
+<br><br><br><br><br>
+<div class="container">
+  <h2><b>Appointments</b></h2>
+  <ul class="responsive-table">
+    <li class="table-header">
+      <div class="col col-1">Doctor Name</div>
+      <div class="col col-2">Patient Name</div>
+      <div class="col col-3">Description</div>
+      <div class="col col-4">Date</div>
+    </li>
+    
+    {% for a in appointments %}
+    <li class="table-row">
+      <div class="col col-1" data-label="Doctor Name">{{ a.doctorName }}</div>
+      <div class="col col-2" data-label="Patient Name">{{ a.patientName }}</div>
+      <div class="col col-3" data-label="Description">{{ a.description }}</div>
+      <div class="col col-4" data-label="Date">{{ a.appointmentDate }}</div>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+<br><br><br><br>
+{% endblock content %}

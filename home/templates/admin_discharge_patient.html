@@ -102,7 +102,7 @@
       <div class="col col-2" data-label="Symptoms">{{ p.symptoms }}</div>
       <div class="col col-3" data-label="Mobile">{{ p.mobile }}</div>
       <div class="col col-3" data-label="Discharge">
-        <a class="btn btn-primary btn-xs" href="#">
+        <a class="btn btn-primary btn-xs" href="{% url 'discharge-patient' p.id  %}">
           <i class="fas fa-sign-out-alt"></i>
         </a>
       </div>

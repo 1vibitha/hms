@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-
 <div class="banner_section layout_padding"></div>
 <br><br><br>
 
@@ -77,7 +76,6 @@
                             <div class="text-danger small">{{ error }}</div>
                         {% endfor %}
                     </div>
-
                     <div class="col-md-6">
                         <label for="id_assignedDoctorId">Select Doctor</label>
                         <div style="padding-bottom: 5px;">
@@ -110,7 +108,7 @@
                     </div>
                 </div>
 
-                <!-- Doctor Selection & Appointment -->
+                <!-- Appointment Details -->
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="id_appointmentDate">Select Appointment Date</label>
@@ -153,10 +151,8 @@
                         </button>
                     </div>
                 </div>
-
             </form>
         </div>
     </div>
 </div>
-
 {% endblock %}

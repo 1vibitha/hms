@@ -1,0 +1,421 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+{% block content %}
+<br><br><br><br>
+
+<head>
+  <meta charset="utf-8">
+  <title>Patient Final Bill</title>
+
+  <style>
+    .invoice-box {
+      max-width: 800px;
+      margin: auto;
+      padding: 30px;
+      border: 1px solid #eee;
+      box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+      font-size: 16px;
+      line-height: 24px;
+      font-family: 'Helvetica Neue', 'Helvetica', Arial, sans-serif;
+      color: #555;
+    }
+
+    .invoice-box table {
+      width: 100%;
+      line-height: inherit;
+      text-align: left;
+    }
+
+    .invoice-box table td {
+      padding: 5px;
+      vertical-align: top;
+    }
+
+    .invoice-box table tr.heading td {
+      background: #eee;
+      border-bottom: 1px solid #ddd;
+      font-weight: bold;
+    }
+
+    .invoice-box table tr.item td {
+      border-bottom: 1px solid #eee;
+    }
+
+    .invoice-box table tr.total td:nth-child(2) {
+      border-top: 2px solid #eee;
+      font-weight: bold;
+    }
+
+    .download {
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .download a {
+      background: #007bff;
+      padding: 10px 20px;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .download a.pay {
+      background: #28a745;
+    }
+
+    .download a:hover {
+      opacity: 0.8;
+    }
+  </style>
+</head>
+
+<br><br>
+<div class="invoice-box">
+  <table cellpadding="0" cellspacing="0">
+    <tr class="top">
+      <td colspan="2">
+        <h1>Hospital Management - Final Bill</h1>
+      </td>
+    </tr>
+
+    <tr class="information">
+      <td>
+        <b>Patient Name:</b> {{ name }}<br>
+        <b>Doctor Name:</b> {{ assignedDoctorName }}<br>
+        <b>Mobile:</b> {{ mobile }}<br>
+        <b>Address:</b> {{ address }}
+      </td>
+      <td>
+        <b>Admit Date:</b> {{ admitDate }}<br>
+        <b>Release Date:</b> {{ todayDate }}<br>
+        <b>Days Spent:</b> {{ day }}
+      </td>
+    </tr>
+
+    <tr class="heading">
+      <td>Disease and Symptoms</td>
+    </tr>
+    <tr class="item">
+      <td>{{ symptoms }}</td>
+    </tr>
+    <tr class="heading">
+      <td>Prescribed Medicines</td>
+  </tr>
+  <tr>
+      <td>
+          {% if prescribed_medicines %}
+              <ul>
+                  {% for medicine in prescribed_medicines %}
+                      <li><b>{{ medicine.name }}</b> - {{ medicine.dosage }} 
+                          {% if medicine.instructions %} - {{ medicine.instructions }}{% endif %}
+                      </li>
+                  {% endfor %}
+              </ul>
+          {% else %}
+              No medicines prescribed.
+          {% endif %}
+      </td>
+  </tr>
+  
+    <tr class="heading">
+      <td>Billing Details</td>
+      <td>Amount (₹)</td>
+    </tr>
+
+    <tr class="item">
+      <td>Room Charge ({{ day }} days)</td>
+      <td>₹{{ roomCharge }}</td>
+    </tr>
+
+    <tr class="item">
+      <td>Doctor Fee</td>
+      <td>₹{{ doctorFee }}</td>
+    </tr>
+
+    <tr class="item">
+      <td>Medicine Cost</td>
+      <td>₹{{ medicineCost }}</td>
+    </tr>
+
+    <tr class="item">
+      <td>Other Charges</td>
+      <td>₹{{ OtherCharge }}</td>
+    </tr>
+
+    <tr class="total">
+      <td><b>Total Amount:</b></td>
+      <td><b>₹{{ total }}</b></td>
+    </tr>
+  </table>
+</div>
+
+<br>
+<div class="download">
+  <a href="{% url 'download-pdf' patientId %}">Download PDF</a>
+  <a class="pay" href="{% url 'create-razorpay-order' patientId %}">Pay Bill</a>
+</div>
+
+<br><br><br><br>
+
+{% endblock %}
+
+
+{% comment %} {% extends 'admin_base.html' %}
+{% load static %}
+{% block content %}
+<br><br><br><br><br><br><br>
+<head>
+  <meta charset="utf-8">
+  <title>A simple, clean, and responsive HTML invoice template</title>
+
+  <style>
+    .invoice-box {
+      max-width: 800px;
+      margin: auto;
+      padding: 30px;
+      border: 1px solid #eee;
+      box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+      font-size: 16px;
+      line-height: 24px;
+      font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+      color: #555;
+    }
+
+    .invoice-box table {
+      width: 100%;
+      line-height: inherit;
+      text-align: left;
+    }
+
+    .invoice-box table td {
+      padding: 5px;
+      vertical-align: top;
+    }
+
+    .invoice-box table tr td:nth-child(2) {
+      text-align: right;
+    }
+
+    .invoice-box table tr.top table td {
+      padding-bottom: 20px;
+    }
+
+    .invoice-box table tr.top table td.title {
+      font-size: 45px;
+      line-height: 45px;
+      color: #333;
+    }
+
+    .invoice-box table tr.information table td {
+      padding-bottom: 40px;
+    }
+
+    .invoice-box table tr.heading td {
+      background: #eee;
+      border-bottom: 1px solid #ddd;
+      font-weight: bold;
+    }
+
+    .invoice-box table tr.details td {
+      padding-bottom: 20px;
+    }
+
+    .invoice-box table tr.item td {
+      border-bottom: 1px solid #eee;
+    }
+
+    .invoice-box table tr.item.last td {
+      border-bottom: none;
+    }
+
+    .invoice-box table tr.total td:nth-child(2) {
+      border-top: 2px solid #eee;
+      font-weight: bold;
+    }
+
+    @media only screen and (max-width: 600px) {
+      .invoice-box table tr.top table td {
+        width: 100%;
+        display: block;
+        text-align: center;
+      }
+
+      .invoice-box table tr.information table td {
+        width: 100%;
+        display: block;
+        text-align: center;
+      }
+    }
+
+    /** RTL **/
+    .rtl {
+      direction: rtl;
+      font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+    }
+
+    .rtl table {
+      text-align: right;
+    }
+
+    .rtl table tr td:nth-child(2) {
+      text-align: left;
+    }
+
+    .menu {
+      top: 50px;
+    }
+
+    .download {
+      text-align: center;
+      display: block;
+
+    }
+  </style>
+</head>
+
+<br><br><br>
+<div class="invoice-box">
+  <table cellpadding="0" cellspacing="0">
+    <tr class="top">
+      <td colspan="2">
+        <table>
+          <tr>
+            <td class="title">
+              <h1>Hospital Management</h1>
+            </td>
+
+            <td>
+
+              Admit Date: {{admitDate}}<br>
+              Release Date: {{todayDate}}<br>
+              Days Spent: {{day}}
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr class="information">
+      <td colspan="2">
+        <table>
+          <tr>
+            <td>
+              Patient Name : {{name}}<br>
+              Patient Mobile : {{mobile}}<br>
+              Patient Addres : {{address}}<br>
+            </td>
+
+            <td>
+              Doctor Name :<br>
+              {{assignedDoctorName}}<br>
+
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr class="heading">
+      <td>
+        Disease and Symptoms
+      </td>
+      <td>
+
+      </td>
+
+    </tr>
+
+    <tr class="details">
+      <td>
+        {{symptoms}}
+      </td>
+    </tr>
+    <tr class="heading">
+      <td>
+        Item
+      </td>
+
+      <td>
+        Price
+      </td>
+    </tr>
+
+    <tr class="item">
+      <td>
+        Room Charge of {{day}} Days
+      </td>
+
+      <td>
+        {{roomCharge}}
+      </td>
+    </tr>
+
+    <tr class="item">
+      <td>
+        Doctor Fee
+      </td>
+
+      <td>
+        {{doctorFee}}
+      </td>
+    </tr>
+
+    <tr class="item">
+      <td>
+        Medicine Cost
+      </td>
+
+      <td>
+        {{medicineCost}}
+      </td>
+    </tr>
+
+    <tr class="item last">
+      <td>
+        Other Charge
+      </td>
+
+      <td>
+        {{OtherCharge}}
+      </td>
+    </tr>
+
+    <tr class="total">
+      <td></td>
+
+      <td>
+        Total Rupees : {{total}}
+      </td>
+    </tr>
+
+  </table>
+</div>
+<br><br>
+<div class="download" style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
+  
+  <!-- Download PDF Button -->
+  <a style="
+      background: red;
+      width: 50%;
+      max-width: 250px;
+      padding: 6px 15px;
+      font-size: 16px;
+      color: white;
+      text-align: center;
+      display: inline-block;
+      border-radius: 6px;
+      text-decoration: none;
+  " href="{% url 'download-pdf' patientId  %}">
+    Download PDF
+  </a>
+
+ 
+</div>
+
+<br><br><br><br>
+
+{% endblock content %} {% endcomment %}

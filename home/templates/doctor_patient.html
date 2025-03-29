@@ -59,6 +59,9 @@
     .bg-c-yellow {
       background: linear-gradient(45deg, #93B0AC, #93B0AC);
     }
+    .bg-c-green {
+      background: linear-gradient(45deg, #82B2C0, #82B2C0);
+    }
 
     .card {
       border-radius: 5px;
@@ -78,32 +81,6 @@
   <div class="row">
     <!-- Doctor's Patient Record -->
     <div class="col-md-6 col-xl-6">
-      <div class="card bg-c-blue order-card">
-        <div class="card-block">
-          <a href="/doctor-view-patient">
-            <h6 class="m-b-20">Your Patient Record</h6>
-          </a>
-          <h2 class="text-center"><i class="fas fa-user-injured"></i></h2>
-        </div>
-      </div>
-    </div>
-
-    <!-- Discharged Patient -->
-    <div class="col-md-6 col-xl-6">
-      <div class="card bg-c-pink order-card">
-        <div class="card-block">
-          <a href="/doctor-view-discharge-patient">
-            <h6 class="m-b-20">Your Discharged Patients</h6>
-          </a>
-          <h2 class="text-center"><i class="fas fa-eject"></i></h2>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Centered Approve Patient Card -->
-  <div class="row d-flex justify-content-center">
-    <div class="col-md-6 col-xl-6">
       <div class="card bg-c-yellow order-card">
         <div class="card-block text-center">
           <a href="/doctor-approve-patient">
@@ -114,6 +91,47 @@
         </div>
       </div>
     </div>
+    <div class="col-md-6 col-xl-6">
+      <div class="card bg-c-blue order-card">
+        <div class="card-block">
+          <a href="/doctor-view-patient">
+            <h6 class="m-b-20">Your Patient Record</h6>
+          </a>
+          <h2 class="text-center"><i class="fas fa-user-injured"></i></h2>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Discharged Patient -->
+    
+  </div>
+
+    <!-- Discharged Patient -->
+ 
+  <!-- Centered Approve Patient Card -->
+  <div class="row d-flex justify-content-center">
+    <div class="col-md-6 col-xl-6">
+      <div class="card bg-c-pink order-card">
+        <div class="card-block">
+          <a href="/doctor-approve-discharge">
+            <h6 class="m-b-20">Approve Discharge for Patients</h6>
+          </a>
+          <h2 class="text-center"><i class="fas fa-eject"></i></h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xl-6">
+      <div class="card bg-c-green order-card">
+        <div class="card-block">
+          <a href="/doctor-view-discharge-patient">
+            <h6 class="m-b-20">Your Discharged Patients</h6>
+          </a>
+          <h2 class="text-center"><i class="fas fa-eject"></i></h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
   </div>
 </div>
 

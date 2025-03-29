@@ -42,9 +42,12 @@
                         <p><strong>Address:</strong> {{ p.address }}</p>
                     </div>
                     <div class="patient-buttons">
-                        <a href="#" class="approve-icon" title="Approve">
+                        <a href="{% url 'doc-approve-patient' p.id %}" class="approve-icon" title="Approve">
                             <i class="fas fa-check-circle"></i>
                         </a>
+                       <a href="{% url 'doc-reject-patient' p.id  %}" class="reject-icon" title="Reject">
+                            <i class="fas fa-trash"></i>
+                          </a>
                     </div>
                 </div>
             </div>

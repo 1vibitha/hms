@@ -126,10 +126,10 @@
             <p><strong><b>Date:</b></strong> {{ a.appointmentDate }}</p>
           </div>
           <div class="appointment-buttons">
-            <a href="#" class="approve-icon" title="Approve">
+            <a href="{% url 'approve-appointment' a.id  %}" class="approve-icon" title="Approve">
               <i class="fas fa-check-circle"></i>
             </a>
-            <a href="#" class="reject-icon" title="Reject">
+            <a href="{% url 'reject-appointment' a.id  %}" class="reject-icon" title="Reject">
               <i class="fas fa-trash"></i>
             </a>
           </div>

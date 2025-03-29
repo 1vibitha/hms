@@ -1,0 +1,37 @@
+{% extends 'doctor_base.html' %}
+{% block content %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<div class="container" style="text-align: center; margin-top: 50px;">
+    <h2>Complete Payment</h2>
+    <p>Patient: <strong>{{ patient.get_name }}</strong></p>
+    <p>Amount: <strong>₹{{ amount|divisibleby:100 }}</strong></p>
+
+    <button id="pay-btn" class="btn btn-success">Pay Now</button>
+</div>
+
+<script>
+    var options = {
+        "key": "{{ razorpay_key }}",
+        "amount": "{{ amount }}",
+        "currency": "INR",
+        "name": "Hospital Management",
+        "description": "Payment for medical bill",
+        "order_id": "{{ order_id }}",
+        "handler": function (response){
+            window.location.href = "/payment-success/?razorpay_payment_id=" + response.razorpay_payment_id;
+        },
+        "prefill": {
+            "name": "{{ patient.get_name }}",
+            "email": "{{ patient.user.email }}",
+            "contact": "{{ patient.mobile }}"
+        }
+    };
+
+    var rzp = new Razorpay(options);
+    document.getElementById("pay-btn").onclick = function(e){
+        rzp.open();
+        e.preventDefault();
+    }
+</script>
+{% endblock %}

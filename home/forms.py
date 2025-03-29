@@ -155,6 +155,11 @@ class PatientForm(forms.ModelForm):
             except Exception:
                 raise ValidationError("Profile picture must be a valid image file.")
         return profile_pic
+    # def clean_assignedDoctorId(self):
+    #     doctor = self.cleaned_data.get("assignedDoctorId")
+    #     if doctor:
+    #         return doctor.id  # Ensure doctor ID is stored as an integer
+    #     return None
 
     def clean(self):
         cleaned_data = super().clean()
@@ -257,3 +262,71 @@ class ContactusForm(forms.Form):
     Email = forms.EmailField()
     Message = forms.CharField(max_length=500,widget=forms.Textarea(attrs={'rows': 3, 'cols': 30}))
 
+from django import forms
+from .models import ChatMessage,  RoomBooking
+
+from django import forms
+from .models import ChatMessage
+
+from django import forms
+from .models import ChatMessage
+
+# class ChatMessageForm(forms.ModelForm):
+#     class Meta:
+#         model = ChatMessage
+#         fields = ['receiver', 'message']
+#         widgets = {
+#             'message': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Type your message...'}),
+#         }
+
+from django import forms
+from .models import ChatMessage
+from .models import Doctor, Patient
+
+class ChatMessageForm(forms.ModelForm):
+    class Meta:
+        model = ChatMessage
+        fields = ['message']
+        widgets = {
+            'message': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Type your message...'}),
+        }
+
+from django import forms
+from .models import PatientDischargeDetails
+
+from django import forms
+import json
+from .models import PatientDischargeDetails
+
+from django import forms
+import json
+from .models import PatientDischargeDetails
+from django import forms
+import json
+from .models import PatientDischargeDetails
+from django import forms
+import json
+from .models import PatientDischargeDetails
+
+class PrescriptionForm(forms.ModelForm):
+    medicines_json = forms.CharField(
+        widget=forms.HiddenInput(), required=False
+    )
+
+    class Meta:
+        model = PatientDischargeDetails
+        fields = ['medicineCost']
+
+    def clean_medicines_json(self):
+        """ Validate and parse medicine data """
+        try:
+            medicines = json.loads(self.cleaned_data['medicines_json'])
+            return json.dumps(medicines)
+        except json.JSONDecodeError:
+            raise forms.ValidationError("Invalid medicine data format.")
+
+# 🏥 Room Booking Form
+class RoomBookingForm(forms.ModelForm):
+    class Meta:
+        model = RoomBooking
+        fields = ['room', 'start_date', 'end_date']

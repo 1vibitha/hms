@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+{% block content %}
+<br><br><br><br>
+<br><br><br><br>
+
+
+
+<style>
+    .chat-container {
+        display: flex;
+        height: 85vh; /* Increased height for better visual spacing */
+        margin: 30px auto; /* Added auto margins for centering */
+        max-width: 1000px; /* Limit maximum width for larger screens */
+        border: 1px solid #e0e0e0;
+        border-radius: 12px; /* Increased border radius for smoother corners */
+        overflow: hidden;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+        background-color: #f8f8f8; /* Soft background */
+    }
+
+    .contacts-panel {
+        width: 300px; /* Increased width for better contact list display */
+        border-right: 1px solid #e0e0e0;
+        padding: 30px;
+        background-color: #f0f4f8; /* Slightly darker background for contrast */
+    }
+
+    .contacts-panel h3 {
+        margin-bottom: 20px;
+        color: #37474f; /* Darker color for headings */
+        font-weight: 600; /* Semi-bold font */
+        font-size: 1.2em;
+    }
+
+    .contacts-panel ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .contacts-panel li {
+        margin-bottom: 15px;
+    }
+
+    .contacts-panel li a {
+        display: block;
+        padding: 12px 15px;
+        background-color: #fff;
+        border-radius: 8px; /* Rounded corners for contacts */
+        text-decoration: none;
+        color: #455a64;
+        transition: background-color 0.3s ease, transform 0.2s ease; /* Added transform transition */
+    }
+
+    .contacts-panel li a:hover {
+        background-color: #e1f5fe;
+        transform: translateY(-2px); /* Slight lift on hover */
+    }
+
+    .chat-panel {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-header {
+        padding: 20px;
+        border-bottom: 1px solid #e0e0e0;
+        background-color: #eceff1; /* Lighter background for header */
+        color: #37474f;
+        font-weight: 600;
+        font-size: 1.1em;
+    }
+
+    .chat-box {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-box p {
+        background-color: #e1f5fe;
+        padding: 12px 15px;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        align-self: flex-start;
+        max-width: 75%; /* Increased max-width for better text wrapping */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle message shadow */
+        color: #37474f;
+    }
+
+    .chat-box p.user-message {
+        background-color: #dcedc8;
+        align-self: flex-end;
+    }
+
+    .chat-input-area {
+        padding: 20px;
+        border-top: 1px solid #e0e0e0;
+        display: flex;
+        background-color: #f0f4f8;
+    }
+
+    .chat-input-area input[type="text"] {
+        flex-grow: 1;
+        padding: 12px 15px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        margin-right: 15px;
+        font-size: 1em;
+    }
+
+    .chat-input-area button {
+        padding: 12px 20px;
+        background-color: #4fc3f7;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        font-weight: 500;
+    }
+
+    .chat-input-area button:hover {
+        background-color: #29b6f6;
+        transform: translateY(-2px);
+    }
+</style>
+
+<div class="chat-container">
+    <div class="contacts-panel">
+        <h3>Contacts</h3>
+        <ul>
+            {% for chat_user in chat_users %}
+            <li>
+                <a href="#" onclick="loadMessages({{ chat_user.id }})">{{ chat_user.get_name }}</a>
+            </li>
+            {% empty %}
+            <li>No contacts available</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="chat-panel">
+        <div class="chat-header">
+            <h3>Messages</h3>
+        </div>
+        <div id="chat-box" class="chat-box"></div>
+        <div class="chat-input-area">
+            <input type="text" id="message-input" placeholder="Type a message">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentReceiver = null;
+
+    function loadMessages(userId) {
+        currentReceiver = userId;
+        fetch(`/chat/messages/${userId}/`)
+        .then(response => response.json())
+        .then(data => {
+            let chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML = "";
+            data.messages.forEach(msg => {
+                let messageClass = msg.sender === 'You' ? 'user-message' : '';
+                chatBox.innerHTML += `<p class="${messageClass}">${msg.message}</p>`;
+            });
+        });
+    }
+
+    function sendMessage() {
+        if (!currentReceiver) {
+            alert("Select a user to chat with first.");
+            return;
+        }
+
+        let message = document.getElementById('message-input').value;
+        fetch(`/chat/send/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({
+                receiver_id: currentReceiver,
+                message: message
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('chat-box').innerHTML += `<p class="user-message">You: ${message}</p>`;
+                document.getElementById('message-input').value = "";
+            } else {
+                alert(data.error);
+            }
+        });
+    }
+</script>
+<br><br><br><br>
+
+{% endblock %}

@@ -117,7 +117,7 @@
             <p><strong>Appointment Date:</strong> {{ a.appointmentDate }}</p>
           </div>
           <div class="patient-buttons">
-            <a class="btn btn-danger btn-md" href="#">
+            <a class="btn btn-danger btn-md" href="{% url 'delete-appointment' a.id  %}">
               <i class="fa fa-trash"></i> 
             </a>
           </div>

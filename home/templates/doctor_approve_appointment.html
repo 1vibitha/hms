@@ -3,56 +3,101 @@
 {% load static %}
 
 <head>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
-    <style>
-        a { text-decoration: none; }
-        .patients_taital { text-align: center; font-size: 2rem; font-weight: bold; margin-bottom: 30px; color: #fff; }
-        .patient-card { color: black; border-radius: 10px; padding: 20px; text-align: center; transition: 0.3s ease-in-out; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
-        .patient-card:hover { transform: scale(1.05); }
-        .patient-image img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid black; object-fit: cover; margin-bottom: 10px; }
-        .patient-info { text-align: center; flex-grow: 1; padding: 10px 0; }
-        .patient-info h4 { font-size: 1.6rem; margin-bottom: 5px; color: black; font-weight: bold; }
-        .patient-info p { font-size: 1rem; margin-bottom: 5px; }
-        .patient-buttons { display: flex; justify-content: center; gap: 15px; margin-top: 10px; }
-        .approve-icon i { font-size: 1.5rem; color: rgb(51, 111, 231); transition: 0.3s ease-in-out; }
-        .reject-icon i { font-size: 1.5rem; color: rgb(134, 17, 4); transition: 0.3s ease-in-out; }
-        .approve-icon:hover i, .reject-icon:hover i { transform: scale(1.2); }
-    </style>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+  <style>
+    a { text-decoration: none; }
+    
+    .appointments_title {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 30px;
+      color: #fff;
+    }
+
+    .appointment-card {
+      color: black;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      transition: 0.3s ease-in-out;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .appointment-card:hover { transform: scale(1.05); }
+
+    .appointment-info { text-align: center; flex-grow: 1; padding: 10px 0; }
+
+    .appointment-info h4 {
+      font-size: 1.6rem;
+      margin-bottom: 5px;
+      color: black;
+      font-weight: bold;
+    }
+
+    .appointment-info p { font-size: 1rem; margin-bottom: 5px; }
+
+    .appointment-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .appointment-buttons a i {
+      font-size: 1.5rem;
+      transition: 0.3s ease-in-out;
+    }
+
+    .approve-icon i { color: rgb(76, 76, 166); }
+    .reject-icon i { color: rgba(169, 77, 67, 0.84); }
+    .appointment-buttons a:hover i { transform: scale(1.2); }
+
+    .appointment-card-container { display: flex; flex-wrap: wrap; }
+
+    /* Background Colors */
+    .bg-c-blue { background: linear-gradient(45deg, rgb(223, 225, 227), rgb(252, 252, 252)); }
+    .bg-c-green { background: linear-gradient(45deg, rgb(238, 238, 238), rgb(255, 255, 255)); }
+    .bg-c-yellow { background: linear-gradient(45deg, rgb(249, 249, 249), rgb(255, 255, 255)); }
+    .bg-c-pink { background: linear-gradient(45deg, rgb(255, 255, 255), rgb(252, 252, 252)); }
+  </style>
 </head>
 
 <div class="doctores_section margim_90">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 text-center">
-                <h1 class="patients_taital">Patients Pending Approval</h1>
-            </div>
-        </div>
-
-        <div class="row">
-            {% for p in patients %}
-            <div class="col-md-6 col-xl-4 mb-4 d-flex">
-                <div class="card patient-card">
-                    <div class="patient-image">
-                        <img src="{{ p.profile_pic.url }}" alt="Patient Image">
-                    </div>
-                    <div class="patient-info">
-                        <h4><b>{{ p.get_name }}</b></h4>
-                        <p><strong>Symptoms:</strong> {{ p.symptoms }}</p>
-                        <p><strong>Mobile:</strong> {{ p.mobile }}</p>
-                        <p><strong>Address:</strong> {{ p.address }}</p>
-                    </div>
-                    <div class="patient-buttons">
-                        <a href="{% url 'approve_patient' p.id %}" class="approve-icon" title="Approve">
-                            <i class="fas fa-check-circle"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            {% empty %}
-            <p class="text-center">No pending patients for approval.</p>
-            {% endfor %}
-        </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <h1 class="appointments_title">Pending Appointment Approvals</h1>
+      </div>
     </div>
+
+    <div class="row appointment-card-container">
+      {% for appointment in appointments %}
+      <div class="col-md-6 col-xl-4 mb-4 d-flex">
+        <div class="card appointment-card {% cycle 'bg-c-blue' 'bg-c-green' 'bg-c-yellow' 'bg-c-pink' %} w-100">
+          <div class="appointment-info">
+            <h4><b>Patient: {{ appointment.patientName }}</b></h4>
+            <p><strong><b>Description:</b></strong> {{ appointment.description }}</p>
+            <p><strong><b>Date:</b></strong> {{ appointment.appointmentDate }}</p>
+            <p><strong><b>Time Slot:</b></strong> {{ appointment.time_slot }}</p>
+          </div>
+          <div class="appointment-buttons">
+            <a href="{% url 'doc-approve-appointment' appointment.id  %}" class="approve-icon" title="Approve">
+              <i class="fas fa-check-circle"></i>
+            </a>
+            
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-center">No pending appointments for approval.</p>
+      {% endfor %}
+    </div>
+  </div>
 </div>
 
 {% endblock content %}

@@ -1,0 +1,45 @@
+{% extends 'patient_base.html' %}
+{% load static %}
+{% block content %}
+
+<br><br><br><br><br>
+<br><br><br><br><br>
+
+
+<div class="container">
+    <h2 class="text-center mb-4">Payment History</h2>
+
+    {% if payment_history %}
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>SN</th>
+                <th>Date</th>
+                <th>Total Amount</th>
+                <th>Doctor</th>
+                <th>Download Invoice</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for payment in payment_history %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ payment.releaseDate }}</td>
+                <td>₹{{ payment.total }}</td>
+                <td>{{ payment.assignedDoctorName }}</td>
+                <td>
+                    <a href="{% url 'download_pdf' payment.patientId %}" class="btn btn-primary btn-sm">
+                        <i class="glyphicon glyphicon-download"></i> Download PDF
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <h4 class="text-center text-danger mt-4">No Payment Records Found</h4>
+    {% endif %}
+</div>
+<br><br><br><br><br>
+
+{% endblock %}

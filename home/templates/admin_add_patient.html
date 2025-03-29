@@ -126,6 +126,17 @@
                             <div class="text-danger small">{{ error }}</div>
                         {% endfor %}
                     </div>
+
+                </div>
+
+                <div class="mb-3 text-center">
+                    <label for="id_profile_pic">Profile Picture</label>
+                    <div style="padding-bottom: 5px;">
+                        {{ patientForm.profile_pic }}
+                    </div>
+                    {% for error in patientForm.profile_pic.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
                 </div>
 
                 <br>

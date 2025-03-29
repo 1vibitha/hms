@@ -53,37 +53,52 @@ urlpatterns = [
     path('update-patient/<int:pk>', views.update_patient_view,name='update-patient'),
     path('admin-add-patient', views.admin_add_patient_view,name='admin-add-patient'),
     path('admin-approve-patient', views.admin_approve_patient_view,name='admin-approve-patient'),
-    # path('approve-patient/<int:pk>', views.approve_patient_view,name='approve-patient'),
-    # path('reject-patient/<int:pk>', views.reject_patient_view,name='reject-patient'),
+    path('approve-patient/<int:pk>', views.approve_patient_view,name='approve-patient'),
+    path('reject-patient/<int:pk>', views.reject_patient_view,name='reject-patient'),
     path('admin-discharge-patient', views.admin_discharge_patient_view,name='admin-discharge-patient'),
-    # path('discharge-patient/<int:pk>', views.discharge_patient_view,name='discharge-patient'),
-    # path('download-pdf/<int:pk>', views.download_pdf_view,name='download-pdf'),
+    path('discharge-patient/<int:pk>', views.discharge_patient_view,name='discharge-patient'),
+    path('download-pdf/<int:pk>', views.download_pdf_view,name='download-pdf'),
 
+    path('create-razorpay-order/<int:pk>/', views.create_razorpay_order, name='create-razorpay-order'),
 
+    # Handle payment success (redirected after Razorpay checkout)
+    path('payment-success/', views.payment_success, name='payment-success'),
+
+    
     path('admin-appointment', views.admin_appointment_view,name='admin-appointment'),
     path('admin-view-appointment', views.admin_view_appointment_view,name='admin-view-appointment'),
     path('admin-add-appointment', views.admin_add_appointment_view,name='admin-add-appointment'),
     path('admin-approve-appointment', views.admin_approve_appointment_view,name='admin-approve-appointment'),
-    # path('approve-appointment/<int:pk>', views.approve_appointment_view,name='approve-appointment'),
-    # path('reject-appointment/<int:pk>', views.reject_appointment_view,name='reject-appointment'),
+    path('approve-appointment/<int:pk>', views.approve_appointment_view,name='approve-appointment'),
+    path('reject-appointment/<int:pk>', views.reject_appointment_view,name='reject-appointment'),
 
 
 #---------FOR DOCTOR RELATED URLS-------------------------------------
 
     path('doctor-dashboard/', views.doctor_dashboard_view, name='doctor-dashboard'),
-    # path('search', views.search_view,name='search'),
+    path('search', views.search_view,name='search'),
 
     path('doctor-patient', views.doctor_patient_view,name='doctor-patient'),
     path('doctor-view-patient', views.doctor_view_patient_view,name='doctor-view-patient'),
     path('doctor-view-discharge-patient',views.doctor_view_discharge_patient_view,name='doctor-view-discharge-patient'),
     path('doctor-approve-patient', views.doctor_approve_patient_view,name='doctor-approve-patient'),
+    path('doc-approve-patient/<int:pk>', views.doc_approve_patient,name='doc-approve-patient'),
+    path('doc-reject-patient/<int:pk>', views.doc_reject_patient,name='doc-reject-patient'),
 
 
     path('doctor-appointment', views.doctor_appointment_view,name='doctor-appointment'),
     path('doctor-view-appointment', views.doctor_view_appointment_view,name='doctor-view-appointment'),
     path('doctor-delete-appointment',views.doctor_delete_appointment_view,name='doctor-delete-appointment'),
     path('doctor-approve-appointment',views.doctor_approve_appointment_view,name='doctor-approve-appointment'),
-    # path('delete-appointment/<int:pk>', views.delete_appointment_view,name='delete-appointment'),
+    path('doc-approve-appointment/<int:pk>', views.doc_approve_appointment,name='doc-approve-appointment'),
+    path('delete-appointment/<int:pk>', views.delete_appointment_view,name='delete-appointment'),
+
+    path('approve-discharge/<int:pk>/', views.approve_discharge_view, name="approve-discharge"),
+
+
+
+    path('doctor-approve-discharge/', views.doctor_approve_discharge_view, name='doctor-approve-discharge'),
+    path('approve-discharge/<int:pk>/', views.approve_discharge_view, name='approve-discharge'),
 
 
 
@@ -98,6 +113,15 @@ urlpatterns = [
     path('patient-view-doctor', views.patient_view_doctor_view,name='patient-view-doctor'),
     path('searchdoctor', views.search_doctor_view,name='searchdoctor'),
     path('patient-discharge', views.patient_discharge_view,name='patient-discharge'),
+    path('patient-payment-history', views.patient_payment_history,name='patient-payment-history'),
 
+
+
+    # path('chat/', views.chat_view, name='chat-view'),
+    path('chat/', views.chat_view, name="chat-view"),
+    path('chat/messages/<int:receiver_id>/', views.chat_messages_view, name="chat_messages"),
+    path('chat/send/', views.send_message, name="send_message"),
+#     path('prescribe-medicine/<int:patient_id>/',  views.prescribe_medicine, name='prescribe-medicine'),
+#     path('book-room/',  views.book_room, name='book-room'),
 
 ]

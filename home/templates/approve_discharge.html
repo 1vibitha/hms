@@ -1,0 +1,49 @@
+{% extends 'doctor_base.html' %}
+{% block content %}
+<br><br>
+<div class="container">
+    <h2 class="text-center">Approve Patient Discharge & Prescribe Medicines</h2>
+    <br>
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label>Prescribed Medicines:</label>
+            <div id="medicine-list"></div>
+            <button type="button" onclick="addMedicine()">Add Medicine</button>
+        </div>
+
+        <input type="hidden" name="medicines_json" id="medicines-json">
+
+        <div class="form-group">
+            <label>Medicine Cost:</label>
+            {{ form.medicineCost }}
+        </div>
+
+        <button type="submit" class="btn btn-success">Approve Discharge & Save Prescription</button>
+    </form>
+</div>
+
+<script>
+    let medicines = [];
+
+    function addMedicine() {
+        let name = prompt("Enter medicine name:");
+        let dosage = prompt("Enter dosage (e.g., 1 tablet per day):");
+        let instructions = prompt("Enter special instructions (optional):");
+
+        if (name && dosage) {
+            medicines.push({ name, dosage, instructions });
+            updateMedicineList();
+        }
+    }
+
+    function updateMedicineList() {
+        document.getElementById("medicines-json").value = JSON.stringify(medicines);
+        let medicineList = document.getElementById("medicine-list");
+        medicineList.innerHTML = medicines.map(m => 
+            `<p><b>${m.name}</b> - ${m.dosage} ${m.instructions ? ' - ' + m.instructions : ''}</p>`
+        ).join("");
+    }
+</script>
+{% endblock %}

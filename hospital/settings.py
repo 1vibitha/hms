@@ -142,3 +142,9 @@ LOGOUT_REDIRECT_URL = '/'
 
 # LOGIN_URL = '/doctorlogin/'  # Default login page (can be overridden)
 # LOGOUT_REDIRECT_URL = '/'   # Redirect after logout
+
+
+import os
+
+RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID', 'rzp_test_d5VCv4MOwkIpcU')
+RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET', 'OXxDDHSLPDiM9yvqbd1SAFdN')

@@ -136,10 +136,10 @@
             <p><strong><b>Address:</b></strong> {{ p.address }}</p>
           </div>
           <div class="patient-buttons">
-            <a href="#" class="approve-icon" title="Approve">
+            <a href="{% url 'approve-patient' p.id  %}" class="approve-icon" title="Approve">
               <i class="fas fa-check-circle"></i>
             </a>
-            <a href="#" class="reject-icon" title="Reject">
+            <a href="{% url 'reject-patient' p.id  %}" class="reject-icon" title="Reject">
               <i class="fas fa-trash"></i>
             </a>
           </div>

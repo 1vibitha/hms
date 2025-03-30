@@ -1,6 +1,83 @@
-<h2>Book a Room</h2>
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Book</button>
-</form>
+{% extends 'patient_base.html' %}
+{% load static %}
+
+{% block content %}
+<br><br><br><br><br>
+<br><br><br><br><br>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg p-5 rounded" style="border-radius: 30px; background: linear-gradient(135deg, #e0f7fa, #c2e9f2); transition: transform 0.3s ease-in-out;">
+                <h2 class="text-center mb-5 text-primary font-weight-bold" style="font-family: 'Lora', serif; letter-spacing: 1.2px; color: #00838f; font-size: 2.6rem; animation: fadeIn 1s ease-in-out;">
+                    <i class="fas fa-bed mr-3"></i> Room Reservation
+                </h2>
+                <form method="POST" class="mt-4" style="animation: fadeInUp 1s ease-in-out;">
+                    {% csrf_token %}
+                    <div class="form-group mb-4">
+                        <label for="{{ form.room.id_for_label }}" style="font-family: 'Crimson Text', serif; font-weight: 600; color: #37474f; font-size: 1.2rem; display: block; margin-bottom: 12px;">Room Type:</label>
+                        {{ form.room }}
+                        <div class="text-danger" style="font-family: 'Nunito', sans-serif; font-size: 0.95rem; margin-top: 5px;">{{ form.room.errors.as_text }}</div>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="{{ form.start_date.id_for_label }}" style="font-family: 'Crimson Text', serif; font-weight: 600; color: #37474f; font-size: 1.2rem; display: block; margin-bottom: 12px;">Check-in Date:</label>
+                        {{ form.start_date }}
+                        <div class="text-danger" style="font-family: 'Nunito', sans-serif; font-size: 0.95rem; margin-top: 5px;">{{ form.start_date.errors.as_text }}</div>
+                    </div>
+                    <div class="form-group mb-5">
+                        <label for="{{ form.end_date.id_for_label }}" style="font-family: 'Crimson Text', serif; font-weight: 600; color: #37474f; font-size: 1.2rem; display: block; margin-bottom: 12px;">Check-out Date:</label>
+                        {{ form.end_date }}
+                        <div class="text-danger" style="font-family: 'Nunito', sans-serif; font-size: 0.95rem; margin-top: 5px;">{{ form.end_date.errors.as_text }}</div>
+                    </div>
+
+                    <div class="text-center mt-5">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill" style="padding: 18px 45px; background: linear-gradient(135deg, #00acc1, #00838f); border: none; font-family: 'Lora', serif; font-weight: 700; font-size: 1.3rem; letter-spacing: 1px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); transition: transform 0.3s ease-in-out;">
+                            <i class="fas fa-check-circle mr-2"></i> Confirm Booking
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card:hover {
+        transform: translateY(-15px);
+    }
+
+    .form-control {
+        border-radius: 15px;
+        padding: 18px;
+        border: 2px solid #b2ebf2;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08);
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        font-family: 'Nunito', sans-serif;
+        font-size: 1.1rem;
+        background-color: #e0f7fa;
+    }
+
+    .form-control:focus {
+        border-color: #00acc1;
+        box-shadow: 0 0 0 0.25rem rgba(0, 188, 212, 0.25);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-5px);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;700&family=Crimson+Text:wght@400;600&family=Nunito:wght@400;500&display=swap" rel="stylesheet">
+<br><br><br><br><br>
+
+{% endblock %}

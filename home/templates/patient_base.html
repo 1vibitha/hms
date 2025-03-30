@@ -109,7 +109,8 @@
             <li><a href="/patient-payment-history">History</a></li>
             <li><a href="{% url 'chat-view' %}">Chat with Doctors</a></li>
 {% comment %} <li><a href="{% url 'prescribe-medicine' patient.id %}">Prescribe Medicines</a></li> {% endcomment %}
-{% comment %} <li><a href="{% url 'book-room' %}">Book Room</a></li> {% endcomment %}
+{% comment %} <li><a href="{% url 'book_room' %}">Book Room</a></li>   {% endcomment %}
+<li><a href="{% url 'patient-rooms' %}">Book Room</a></li>  
 
             
          </ul>

@@ -161,7 +161,10 @@ class Prescription(models.Model):
 
     def __str__(self):
         return f"{self.medicine_name} for {self.patient.get_name}"
-    
+
+
+
+
 class Room(models.Model):
     room_number = models.CharField(max_length=10, unique=True)
     room_type = models.CharField(max_length=50, choices=[
@@ -174,9 +177,10 @@ class Room(models.Model):
     def __str__(self):
         return f"Room {self.room_number} - {self.room_type}"
 
+
 class RoomBooking(models.Model):
-    patient = models.ForeignKey('Patient', on_delete=models.CASCADE)
-    room = models.ForeignKey('Room', on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
@@ -192,3 +196,9 @@ class RoomBooking(models.Model):
             self.room.is_available = True  # Room becomes available again
         self.room.save()
         super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        """ Make the room available when the booking is deleted """
+        self.room.is_available = True  # Make the room available
+        self.room.save()
+        super().delete(*args, **kwargs)

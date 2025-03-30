@@ -1,0 +1,119 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+
+{% block content %}
+<br><br><br><br><br>
+<br><br><br><br><br>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg p-5 rounded" style="background-color: #e6f0ff;">
+                <h2 class="text-center mb-4 animated-heading" style="font-family: 'Poppins', sans-serif; font-size: 2.6rem; color:#4ed6f8;"><b>Add Room</b></h2>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="{{ form.room_number.id_for_label }}" class="form-label" style="font-family: 'Poppins', sans-serif; font-size: 1.2rem; font-weight: 500; color:rgb(8, 101, 115);">Room Number</label>
+                        {{ form.room_number }}
+                        <div class="text-danger" style="font-family: 'Poppins', sans-serif; font-size: 1rem; font-weight: 500;">{{ form.room_number.errors.as_text }}</div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="{{ form.room_type.id_for_label }}" class="form-label" style="font-family: 'Poppins', sans-serif; font-size: 1.2rem; font-weight: 500; color:rgb(8, 101, 115);">Room Type</label>
+                        {{ form.room_type }}
+                        <div class="text-danger" style="font-family: 'Poppins', sans-serif; font-size: 1rem; font-weight: 500;">{{ form.room_type.errors.as_text }}</div>
+                    </div>
+                    <br><br>
+                    <div class="mb-4 form-check">
+                        {{ form.is_available }}
+                        <label class="form-check-label" for="{{ form.is_available.id_for_label }}" style="font-family: 'Poppins', sans-serif; font-size: 1.2rem; font-weight: 500; color:rgb(8, 101, 115);">Is Available</label>
+                        <div class="text-danger" style="font-family: 'Poppins', sans-serif; font-size: 1rem; font-weight: 500;">{{ form.is_available.errors.as_text }}</div>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill shadow" style="font-family: 'Poppins', sans-serif; font-size: 1.25rem; background-color:hsla(188, 81.30%, 44.10%, 0.97); border-color:rgb(23, 174, 198);">Add Room</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+        background-color: #e6f0ff;
+    }
+
+    /* Heading Styling */
+    .animated-heading {
+        font-size: 2.6rem;
+        color:rgb(39, 217, 241);
+        animation: fadeInUp 1s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Label Styling */
+    .form-label {
+        font-size: 1.2rem; /* Increased label size */
+        font-weight: 600; /* Increased label weight */
+        color:rgb(16, 19, 25);
+    }
+
+    /* Error Message Styling */
+    .text-danger {
+        font-size: 1rem; /* Increased error message size */
+        font-weight: 500; /* Increased error message weight */
+        margin-top: 5px;
+        color: #e57373;
+    }
+
+    /* Rest of the styles remain unchanged */
+    .form-control {
+        border-radius: 10px;
+        padding: 14px;
+        border: 1.5px solid #ced4da;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+    .form-control:focus {
+        border-color: #64b5f6;
+        box-shadow: 0 0 0 0.25rem rgba(100, 181, 246, 0.25), inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary {
+        background-color: #4285f4;
+        border-color: #4285f4;
+        padding: 14px 35px;
+        font-size: 1.25rem;
+        transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+    }
+
+    .btn-primary:hover {
+        background-color: #1e88e5;
+        border-color: #1e88e5;
+    }
+
+    .form-check-label {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color:rgb(25, 27, 31);
+    }
+
+    .rounded-pill {
+        border-radius: 30px;
+    }
+</style>
+<br><br><br><br><br>
+
+{% endblock %}

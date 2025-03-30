@@ -263,7 +263,7 @@ class ContactusForm(forms.Form):
     Message = forms.CharField(max_length=500,widget=forms.Textarea(attrs={'rows': 3, 'cols': 30}))
 
 from django import forms
-from .models import ChatMessage,  RoomBooking
+from .models import ChatMessage
 
 from django import forms
 from .models import ChatMessage
@@ -296,26 +296,14 @@ from .models import PatientDischargeDetails
 
 from django import forms
 import json
-from .models import PatientDischargeDetails
-
-from django import forms
-import json
-from .models import PatientDischargeDetails
-from django import forms
-import json
-from .models import PatientDischargeDetails
-from django import forms
-import json
-from .models import PatientDischargeDetails
+from .models import PatientDischargeDetails,RoomBooking
 
 class PrescriptionForm(forms.ModelForm):
-    medicines_json = forms.CharField(
-        widget=forms.HiddenInput(), required=False
-    )
+    medicines_json = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
         model = PatientDischargeDetails
-        fields = ['medicineCost']
+        fields = []
 
     def clean_medicines_json(self):
         """ Validate and parse medicine data """
@@ -325,8 +313,24 @@ class PrescriptionForm(forms.ModelForm):
         except json.JSONDecodeError:
             raise forms.ValidationError("Invalid medicine data format.")
 
-# 🏥 Room Booking Form
+from django import forms
+from .models import RoomBooking, Room
+
+class AddRoomForm(forms.ModelForm):
+    class Meta:
+        model = Room
+        fields = ['room_number', 'room_type', 'is_available']
+
 class RoomBookingForm(forms.ModelForm):
+    room = forms.ModelChoiceField(queryset=Room.objects.filter(is_available=True), label="Select Room")
+
+    def label_from_instance(self, obj):
+        return obj.room_type  # Display only the room_type
+
     class Meta:
         model = RoomBooking
         fields = ['room', 'start_date', 'end_date']
+        widgets = {
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'type': 'date'}),
+        }

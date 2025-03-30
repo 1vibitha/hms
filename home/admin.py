@@ -25,7 +25,7 @@ admin.site.register(PatientDischargeDetails, PatientDischargeDetailsAdmin)
 
 
 from django.contrib import admin
-from .models import ChatMessage, Room, RoomBooking
+from .models import ChatMessage
 
 from django.contrib import admin
 from .models import ChatMessage
@@ -54,16 +54,8 @@ class ChatMessageAdmin(admin.ModelAdmin):
 
 admin.site.register(ChatMessage, ChatMessageAdmin)
 
+from django.contrib import admin
+from .models import Room, RoomBooking, Patient
 
-
-@admin.register(Room)
-class RoomAdmin(admin.ModelAdmin):
-    list_display = ('room_number', 'room_type', 'is_available')
-    list_filter = ('room_type', 'is_available')
-    search_fields = ('room_number',)
-
-@admin.register(RoomBooking)
-class RoomBookingAdmin(admin.ModelAdmin):
-    list_display = ('patient', 'room', 'start_date', 'end_date', 'is_active')
-    list_filter = ('is_active', 'start_date', 'end_date')
-    search_fields = ('patient__user__first_name', 'room__room_number')
+admin.site.register(Room)
+admin.site.register(RoomBooking)

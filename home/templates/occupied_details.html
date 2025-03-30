@@ -1,0 +1,119 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+
+{% block content %}
+<br><br><br><br><br>
+<br><br><br><br><br>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg rounded" style="border-radius: 18px; background: linear-gradient(135deg, #e3f2fd, #bbdefb);">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <h2 class="text-indigo-700" style="font-family: 'Poppins', sans-serif; font-weight: 600;">
+                            <i class="fas fa-file-alt mr-2"></i> Room Occupancy Info
+                        </h2>
+                        <p class="text-gray-600" style="font-family: 'Open Sans', sans-serif;">Room {{ room.room_number }}</p>
+                    </div>
+
+                    {% if booking %}
+                    <div class="info-grid">
+                        <div class="info-grid-item">
+                            <i class="fas fa-user-tag text-blue-600"></i>
+                            <div class="info-grid-text">
+                                <span class="info-grid-label">Patient Name</span>
+                                <span class="info-grid-value">{{ booking.patient.get_name }}</span>
+                            </div>
+                        </div>
+                        <div class="info-grid-item">
+                            <i class="fas fa-hospital-alt text-blue-600"></i>
+                            <div class="info-grid-text">
+                                <span class="info-grid-label">Room Type</span>
+                                <span class="info-grid-value">{{ booking.room.room_type }}</span>
+                            </div>
+                        </div>
+                        <div class="info-grid-item">
+                            <i class="fas fa-calendar-day text-blue-600"></i>
+                            <div class="info-grid-text">
+                                <span class="info-grid-label">Start Date</span>
+                                <span class="info-grid-value">{{ booking.start_date }}</span>
+                            </div>
+                        </div>
+                        {% if booking.end_date %}
+                        <div class="info-grid-item">
+                            <i class="fas fa-calendar-check text-blue-600"></i>
+                            <div class="info-grid-text">
+                                <span class="info-grid-label">End Date</span>
+                                <span class="info-grid-value">{{ booking.end_date }}</span>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="info-grid-item">
+                            <i class="fas fa-hourglass-half text-blue-600"></i>
+                            <div class="info-grid-text">
+                                <span class="info-grid-label">End Date</span>
+                                <span class="info-grid-value">Ongoing</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <p class="text-center text-gray-500 mt-4" style="font-family: 'Open Sans', sans-serif;">
+                        <i class="fas fa-exclamation-triangle mr-2"></i> Room Available
+                    </p>
+                    {% endif %}
+
+                    <div class="text-center mt-4">
+                        <a href="{% url 'room-list' %}" class="btn btn-primary rounded-pill px-4 py-2" style="font-family: 'Poppins', sans-serif;">
+                            <i class="fas fa-arrow-left mr-2"></i> Back to List
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-gap: 1.5rem;
+    }
+
+    .info-grid-item {
+        display: flex;
+        align-items: center;
+        padding: 1.2rem;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .info-grid-item i {
+        font-size: 1.8rem;
+        margin-right: 1.5rem;
+    }
+
+    .info-grid-text {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .info-grid-label {
+        font-weight: 600;
+        color: #4a5568;
+        font-size: 0.9rem;
+    }
+
+    .info-grid-value {
+        color: #2d3748;
+        font-size: 1rem;
+    }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+<br><br><br><br><br>
+
+{% endblock %}

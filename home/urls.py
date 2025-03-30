@@ -117,11 +117,21 @@ urlpatterns = [
 
 
 
-    # path('chat/', views.chat_view, name='chat-view'),
+
     path('chat/', views.chat_view, name="chat-view"),
     path('chat/messages/<int:receiver_id>/', views.chat_messages_view, name="chat_messages"),
     path('chat/send/', views.send_message, name="send_message"),
-#     path('prescribe-medicine/<int:patient_id>/',  views.prescribe_medicine, name='prescribe-medicine'),
-#     path('book-room/',  views.book_room, name='book-room'),
 
+     path('book-room/', views.book_room, name='book-room'),
+    path('book-room/success/', views.room_booking_success, name='room-booking-success'),
+    path('bookings/', views.room_booking_list, name='room-booking-list'),
+    path('booking/<int:booking_id>/', views.room_booking_detail, name='room-booking-detail'),
+    path('add-room/', views.add_room, name='add-room'),
+    path('room/', views.room, name='room'),
+
+
+    path('rooms/', views.room_list, name='room-list'),
+    path('patient-rooms/', views.room_view, name='patient-rooms'),
+    path('bookings/delete/<int:booking_id>/', views.delete_booking, name='delete-booking'),
+    path('rooms/<int:room_id>/occupied/', views.occupied_details, name='occupied-details'),
 ]

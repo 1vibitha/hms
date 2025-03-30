@@ -53,19 +53,9 @@ def admin_patient_view(request):
 @login_required
 def admin_appointment_view(request):
     return render(request, 'admin_appointment.html')  # Replace with your actual template
-
 @login_required
-def admin_doctor_view(request):
-    return render(request, "admin_doctor.html")  # Replace with your actual template
-
-
-@login_required
-def admin_patient_view(request):
-    return render(request, "admin_patient.html")  # Replace with your actual template
-
-@login_required
-def admin_appointment_view(request):
-    return render(request, "admin_appointment.html")  # Replace with your actual template
+def room(request):
+    return render(request, 'room.html')   # Replace with your actual template
 
 def logout(request):
     logouts(request)
@@ -1267,59 +1257,56 @@ def doctor_approve_discharge_view(request):
 
     return render(request, 'doctor_approve_discharge.html', {'patients': patients, 'doctor': doctor})
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.utils.timezone import now
+
 import json
-from .models import Patient, Doctor, PatientDischargeDetails
-from .forms import PrescriptionForm
+import json
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.timezone import now
-from datetime import timedelta
+from django.contrib.auth.decorators import login_required
+from .models import Patient, PatientDischargeDetails, Doctor
 
 @login_required(login_url='doctorlogin')
 def approve_discharge_view(request, pk):
+    """ Doctor approves discharge and prescribes medicines """
+
     patient = get_object_or_404(Patient, id=pk)
     doctor = get_object_or_404(Doctor, user=request.user)
 
     if request.method == 'POST':
-        form = PrescriptionForm(request.POST)
-        if form.is_valid():
-            medicines_data = request.POST.get('medicines_json', '[]')
-            medicines_json = json.loads(medicines_data)
+        medicines_data = request.POST.get('medicines_json', '[]').strip()
 
-            discharge = form.save(commit=False)
-            discharge.patientId = patient.id
-            discharge.patientName = patient.get_name
-            discharge.assignedDoctorName = doctor.get_name
-            discharge.address = patient.address
-            discharge.mobile = patient.mobile
-            discharge.symptoms = patient.symptoms
-            discharge.admitDate = patient.admitDate
-            discharge.releaseDate = now().date()
+        # Handle empty or invalid JSON
+        try:
+            medicines_json = json.loads(medicines_data) if medicines_data else []
+        except json.JSONDecodeError:
+            medicines_json = []
 
-            # ✅ Ensure daySpent is at least 1
-            day_difference = (discharge.releaseDate - discharge.admitDate).days
-            discharge.daySpent = max(1, day_difference)  # Ensures a minimum of 1 day
+        discharge = PatientDischargeDetails(
+            patientId=patient.id,
+            patientName=patient.get_name,
+            assignedDoctorName=doctor.get_name,
+            address=patient.address,
+            mobile=patient.mobile,
+            symptoms=patient.symptoms,
+            admitDate=patient.admitDate,
+            releaseDate=now().date(),
+            daySpent=(now().date() - patient.admitDate).days,
+            roomCharge=2000 * (now().date() - patient.admitDate).days,
+            doctorFee=5000,
+            OtherCharge=1000,
+            medicineCost=0,  # Admin will enter later
+            total=2000 * (now().date() - patient.admitDate).days + 5000 + 1000,
+            prescribed_medicines=json.dumps(medicines_json)  # Save as JSON
+        )
+        discharge.save()
 
-            discharge.roomCharge = discharge.daySpent * 2000  # Example room rate
-            discharge.doctorFee = 5000
-            discharge.OtherCharge = 1000
-            discharge.total = discharge.roomCharge + discharge.doctorFee + discharge.medicineCost + discharge.OtherCharge
+        patient.discharge_status = True
+        patient.status = True
+        patient.save()
 
-            discharge.prescribed_medicines = json.dumps(medicines_json)
-            discharge.save()
+        return redirect('doctor-approve-discharge')
 
-            patient.discharge_status = True
-            patient.status = True
-            patient.save()
-
-            return redirect('doctor-approve-discharge')
-
-    else:
-        form = PrescriptionForm()
-
-    return render(request, 'approve_discharge.html', {'form': form, 'patient': patient})
-
+    return render(request, 'approve_discharge.html', {'patient': patient})
 
 # @login_required(login_url='doctorlogin')
 # @user_passes_test(lambda u: u.groups.filter(name='DOCTOR').exists())
@@ -1723,21 +1710,40 @@ from .models import ChatMessage
 from .models import Doctor, Patient, Appointment  # Import Appointment model
 import json
 
+# @login_required
+# def chat_view(request):
+#     """ Displays the chat page with filtered users """
+#     user = request.user
+#     chat_users = []
+
+#     if hasattr(user, 'patient'):
+#         chat_users = Doctor.objects.all()  # Patients can chat with all doctors
+#     elif hasattr(user, 'doctor'):
+#         doctor = user.doctor
+#         assigned_patients = Patient.objects.filter(assignedDoctorId=doctor.id)
+#         appointment_patients = Patient.objects.filter(id__in=Appointment.objects.filter(doctorId=doctor.id).values_list('patientId', flat=True))
+#         chat_users = assigned_patients.union(appointment_patients)  # Combine both patient groups
+
+#     return render(request, 'chat.html', {'chat_users': chat_users})
 @login_required
 def chat_view(request):
     """ Displays the chat page with filtered users """
     user = request.user
     chat_users = []
-
-    if hasattr(user, 'patient'):
+    
+    if hasattr(user, 'patient'):  # If user is a patient
         chat_users = Doctor.objects.all()  # Patients can chat with all doctors
-    elif hasattr(user, 'doctor'):
+        base_template = "patient_base.html"
+    elif hasattr(user, 'doctor'):  # If user is a doctor
         doctor = user.doctor
         assigned_patients = Patient.objects.filter(assignedDoctorId=doctor.id)
         appointment_patients = Patient.objects.filter(id__in=Appointment.objects.filter(doctorId=doctor.id).values_list('patientId', flat=True))
-        chat_users = assigned_patients.union(appointment_patients)  # Combine both patient groups
+        chat_users = assigned_patients.union(appointment_patients)
+        base_template = "doctor_base.html"
+    else:
+        base_template = "base.html"
 
-    return render(request, 'chat.html', {'chat_users': chat_users})
+    return render(request, 'chat.html', {'chat_users': chat_users, 'base_template': base_template})
 
 @login_required
 def chat_messages_view(request, receiver_id):
@@ -1789,3 +1795,150 @@ def send_message(request):
                 return JsonResponse({"error": "Doctors can only chat with their assigned patients."}, status=403)
 
     return JsonResponse({"error": "Invalid request."}, status=400)
+
+
+
+
+from .models import RoomBooking
+from .forms import RoomBookingForm
+
+# def book_room(request):
+#     if request.method == 'POST':
+#         form = RoomBookingForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('room-booking-success')
+#     else:
+#         form = RoomBookingForm()
+    
+#     return render(request, 'book_room.html', {'form': form})
+
+# 🏥 Room Booking View
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import RoomBookingForm
+from .models import RoomBooking
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import RoomBookingForm
+from .models import RoomBooking, Room
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import RoomBookingForm
+from .models import RoomBooking, Room
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from .forms import AddRoomForm
+from django.contrib.admin.views.decorators import staff_member_required
+
+@staff_member_required
+def add_room(request):
+    if request.method == 'POST':
+        form = AddRoomForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('room-list')  # Replace 'room-list' with the URL name for your room list page
+    else:
+        form = AddRoomForm()
+    return render(request, 'add_room.html', {'form': form})
+from django.shortcuts import render
+from .models import Room
+
+def room_list(request):
+    rooms = Room.objects.all()
+    return render(request, 'room_list.html', {'rooms': rooms})
+# views.py
+def occupied_details(request, room_id):
+    """View to display detailed information about the occupied room."""
+    room = get_object_or_404(Room, id=room_id)
+    active_booking = RoomBooking.objects.filter(room=room, is_active=True).first()
+
+    if active_booking:
+        patient = active_booking.patient
+        return render(request, 'occupied_details.html', {
+            'patient': patient,
+            'room': room,
+            'booking': active_booking,
+        })
+    else:
+        return render(request, 'occupied_details.html', {'room': room, 'booking': None})
+from .models import Patient
+
+@login_required
+def book_room(request):
+    if request.method == 'POST':
+        form = RoomBookingForm(request.POST)
+        if form.is_valid():
+            booking = form.save(commit=False)
+
+            # Check if a Patient instance exists for the user
+            patient, created = Patient.objects.get_or_create(user=request.user) # Add user field to Patient model
+
+            booking.patient = patient
+            booking.save()
+            return redirect('room-booking-success')
+    else:
+        form = RoomBookingForm()
+
+    return render(request, 'book_room.html', {'form': form})
+
+@login_required
+def room_booking_success(request):
+    return render(request, 'room_booking_success.html')
+
+@login_required
+def room_booking_detail(request, booking_id):
+    booking = get_object_or_404(RoomBooking, id=booking_id)
+    return render(request, 'room_booking_detail.html', {'booking': booking})
+
+@login_required(login_url='patientlogin')
+@user_passes_test(is_patient)
+def room_view(request): #for profile picture of patient in sidebar
+    return render(request,'patient_room.html',)
+from django.shortcuts import render
+from .models import RoomBooking
+from django.contrib.auth.decorators import login_required
+
+from django.shortcuts import render
+from .models import RoomBooking, Patient  # Import Patient model
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def room_booking_list(request):
+    try:
+        patient = Patient.objects.get(user=request.user)  # Get the Patient instance
+        bookings = RoomBooking.objects.filter(patient=patient)  # Filter bookings by Patient
+    except Patient.DoesNotExist:
+        bookings = RoomBooking.objects.none()  # Return an empty queryset if no Patient exists
+
+    return render(request, 'room_booking_list.html', {'bookings': bookings})
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import RoomBooking, Patient  # Import Patient model
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+
+
+@login_required
+def delete_booking(request, booking_id):
+    """View to delete a room booking."""
+    try:
+        patient = Patient.objects.get(user=request.user)  # Get the Patient instance
+        print(f"Patient being used: {patient}")  # Debugging print statement
+
+        booking = get_object_or_404(RoomBooking, id=booking_id, patient=patient) #get booking, and check if patient owns booking.
+        print(f"Booking found: {booking}") #debugging print statement.
+
+        if request.method == 'GET':
+            try:
+                booking.delete()
+                messages.success(request, 'Booking successfully deleted.')
+            except Exception as e:
+                messages.error(request, f'An error occurred: {e}')
+            return redirect('room-booking-list')  # Redirect to the bookings list
+        else:
+            messages.error(request, "Invalid request method.")
+            return redirect('proom-booking-list')
+    except Patient.DoesNotExist:
+        messages.error(request, "Patient not found.")
+        return redirect('room-booking-list')

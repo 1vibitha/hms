@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg p-5 rounded" style="border-radius: 25px; background: linear-gradient(135deg, #f0f4c3, #dce775);">
+                <h2 class="text-center mb-4 text-success font-weight-bold" style="font-family: 'Playfair Display', serif; letter-spacing: 1.2px; color: #558b2f; font-size: 2.4rem;">
+                    <i class="fas fa-info-circle mr-2"></i> Room Booking Details
+                </h2>
+                <div class="mt-4">
+                    <p style="font-family: 'Merriweather', serif; font-size: 1.15rem; color: #37474f;">
+                        <i class="fas fa-user mr-2"></i> Patient: <span class="font-weight-bold">{{ booking.patient.get_name }}</span>
+                    </p>
+                    <p style="font-family: 'Merriweather', serif; font-size: 1.15rem; color: #37474f;">
+                        <i class="fas fa-bed mr-2"></i> Room: <span class="font-weight-bold">{{ booking.room.room_number }}</span> ({{ booking.room.room_type }})
+                    </p>
+                    <p style="font-family: 'Merriweather', serif; font-size: 1.15rem; color: #37474f;">
+                        <i class="fas fa-calendar-check mr-2"></i> Start Date: <span class="font-weight-bold">{{ booking.start_date }}</span>
+                    </p>
+                    {% if booking.end_date %}
+                    <p style="font-family: 'Merriweather', serif; font-size: 1.15rem; color: #37474f;">
+                        <i class="fas fa-calendar-times mr-2"></i> End Date: <span class="font-weight-bold">{{ booking.end_date }}</span>
+                    </p>
+                    {% else %}
+                    <p style="font-family: 'Merriweather', serif; font-size: 1.15rem; color: #37474f;">
+                        <i class="fas fa-hourglass-half mr-2"></i> End Date: <span class="font-weight-bold">Ongoing</span>
+                    </p>
+                    {% endif %}
+                </div>
+                <div class="text-center mt-4">
+                    <a href="{% url 'book-room' %}" class="btn btn-outline-success rounded-pill" style="padding: 12px 30px; font-family: 'Lora', serif; font-weight: 600; font-size: 1.1rem;">
+                        <i class="fas fa-arrow-left mr-2"></i> Back to Booking
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        box-shadow: 0 18px 36px rgba(0, 0, 0, 0.18);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .card:hover {
+        transform: translateY(-10px);
+    }
+
+    .btn-outline-success {
+        border-color: #8bc34a;
+        color: #689f38;
+    }
+
+    .btn-outline-success:hover {
+        background-color: #aed581;
+        border-color: #aed581;
+        color: white;
+    }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Merriweather:wght@400;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+{% endblock %}

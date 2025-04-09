@@ -1,0 +1,11 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<h2>🚨 Emergency Alert</h2>
+<p>Fill in the details to notify hospital staff about an emergency.</p>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-danger">Send Emergency Alert</button>
+</form>
+{% endblock %}

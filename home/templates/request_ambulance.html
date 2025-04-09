@@ -1,0 +1,111 @@
+{% extends 'patient_base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card request-form-card">
+                <div class="card-body">
+                    <h2 class="mb-4 stylish-heading text-center">Ambulance Request</h2>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="form-group text-center">
+                            <label for="{{ form.location.id_for_label }}" class="form-label d-block">Location</label>
+                            {{ form.location }}
+                            <div class="text-danger">{{ form.location.errors.as_text }}</div>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn request-btn">Request Ambulance</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .request-form-card {
+        border: none;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        background: linear-gradient(135deg, #f0f8ff, #e1f5fe); /* Soft blue gradient */
+        padding: 50px;
+    }
+
+    .stylish-heading {
+        font-family: 'Playfair Display', serif; /* Elegant serif font */
+        font-size: 2.5rem;
+        color: #263238; /* Deep gray */
+        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        padding-bottom: 15px;
+        animation: fadeInUp 0.8s ease-out; /* Changed to fadeInUp */
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+    .form-label {
+        font-family: 'Lora', serif; /* Refined serif font */
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #37474f;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        padding: 14px;
+        border: 1.5px solid #b0bec5;
+        box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        font-size: 1rem;
+        font-family: 'Lora', serif;
+        margin: 0 auto;
+        display: block;
+        max-width: 300px;
+    }
+
+    .form-control:focus {
+        border-color: #64b5f6;
+        box-shadow: 0 0 0 0.25rem rgba(100, 181, 246, 0.25), inset 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .text-danger {
+        color: #d32f2f;
+        font-size: 0.95rem;
+        margin-top: 10px;
+    }
+
+    .request-btn {
+        background: linear-gradient(to right, #42a5f5, #1e88e5);
+        border: none;
+        color: white;
+        padding: 16px 35px;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-top: 30px;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .request-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}

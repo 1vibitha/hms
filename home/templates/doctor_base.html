@@ -43,7 +43,8 @@
                   <div class="header_top_main">
                      <div class="call_text"><a href="#"><span class="padding_right0"><i class="fa fa-phone" aria-hidden="true"></i></span>  Call : +01 1234567890</a></div>
                      <div class="call_text_2"><a href="#"><span class="padding_right0"><i class="fa fa-envelope" aria-hidden="true"></i></span> demo@gmail.com</a></div>
-                     <div class="call_text_1"><a href="#"><span class="padding_right0"><i class="fa fa-map-marker" aria-hidden="true"></i></span> Location</a></div>
+                     <div class="call_text_1"><a href="#"><span class="padding_right0"></span>Location</a></div>
+                    
                   </div>
                </div>
             </div>
@@ -57,15 +58,13 @@
   <div class="container">
      <nav class="navbar navbar-expand-lg navbar-light bg-light" style="padding: 10px 0;"> <!-- Decreased padding for navbar -->
       <div class="d-flex justify-content-start align-items-center" style="margin-bottom: 0;"> <!-- Removed bottom margin to reduce space -->
-        <!-- Admin Image and Text (Left-aligned) -->
-        <div class="d-flex flex-column" style="margin-right: 10px;"> <!-- Reduced margin-right for more compact spacing -->
-          
-           <img src="{{ doctor.profile_pic.url }}" alt="Profile Pic" style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 5px;">
-
-           <div class="text-center">
-              <h6 style="margin: 0; color: white; font-size: 14px;">Doctor</h6> <!-- Smaller font size for Admin text -->
-              <h2 style="margin: 0; color: white; font-size: 20px;">{{request.user.first_name}}</h2> <!-- Smaller font size for admin name -->
-           </div>
+          <!-- Admin Image and Text (Left-aligned) -->
+          <div class="d-flex flex-column" style="margin-right: 10px;">
+            <img src="{{ doctor.profile_pic.url }}" alt="Profile Pic" style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 5px;">
+            <div class="text-center">
+                <h6 style="margin: 0; color: white; font-size: 14px;">Doctor</h6>
+                <h2 style="margin: 0; color: white; font-size: 20px;">{{request.user.first_name}}</h2>
+            </div>
         </div>
      
         <!-- Logo centered -->
@@ -100,14 +99,15 @@
      <!-- Custom Background and Menu -->
      <div class="custom_bg">
         <div class="custom_menu">
-           <ul>
-              <li class="active"><a href="/doctor-dashboard">Dashboard</a></li>
-              <li><a href="/doctor-patient">Patient</a></li>
-              <li><a href="/doctor-appointment">Appointment</a></li>
-              <li><a href="{% url 'chat-view' %}">Chat with Patients</a></li>
+         <ul>
+            <li class="active"><a href="/doctor-dashboard">Dashboard</a></li>
+            <li><a href="/doctor-patient">Patient</a></li>
+            <li><a href="/doctor-appointment">Appointment</a></li>
+            <li><a href="{% url 'chat-view' %}">Chat with Patients</a></li>
+            <li><a href="{% url 'doctor-appointment-management' %}">current appointment</a></li>
 
-              
-           </ul>
+            
+         </ul>
         </div>
         <form class="form-inline my-2 my-lg-0">
            <div class="search_btn">
@@ -238,8 +238,277 @@
 </html>
 
 
+{% comment %} 
 
 
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <title>About</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+    <link rel="icon" href="{% static 'images/fevicon.png' %}" type="image/gif" />
+    <link rel="stylesheet" href="{% static 'css/jquery.mCustomScrollbar.min.css' %}">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link href="https://fonts.googleapis.com/css?family=Dancing+Script:400,700|Poppins:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+    <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        .header_section {
+            background-color: #007bff;
+            color: white;
+        }
+        .header_section .navbar-brand img {
+            max-width: 180px;
+        }
+        .header_section .navbar-nav .nav-link {
+            color: white !important;
+            padding: 10px 15px;
+            font-size: 16px;
+        }
+        .header_section .navbar-nav .nav-item.active .nav-link {
+            font-weight: bold;
+        }
+        .custom_bg {
+            background-color: #f8f9fa;
+            padding: 15px 0;
+            margin-top: 10px;
+        }
+        .custom_menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: flex-start;
+        }
+        .custom_menu ul li {
+            margin: 0 15px 0 0;
+        }
+        .custom_menu ul li a {
+            color: #333;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .custom_menu ul li a:hover, .custom_menu ul li.active a {
+            background-color: #007bff;
+            color: white;
+        }
+        .footer_section {
+            background-color: #343a40;
+            color: white;
+            padding: 40px 0;
+        }
+        .footer_section .footer_taital {
+            color: white;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .footer_section a {
+            color: #ccc;
+        }
+        .footer_section a:hover {
+            color: white;
+        }
+        .copyright_section {
+            background-color: #222;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .profile-container {
+            display: flex;
+            align-items: center;
+        }
+        .profile-info {
+            margin-left: 10px;
+        }
+        .profile-info h2 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        .profile-info h6 {
+            font-size: 14px;
+        }
 
+        /* Adjust navbar for smaller screens */
+        @media (max-width: 991px) {
+            .navbar-nav {
+                flex-direction: row; /* Display nav items in a row */
+                flex-wrap: wrap; /* Allow wrapping to multiple lines */
+                justify-content: center; /* Center items horizontally */
+            }
+            .navbar-nav .nav-item {
+                width: auto; /* Allow items to take their natural width */
+                margin: 5px; /* Add some margin for spacing */
+            }
+            .navbar-nav .nav-link {
+                padding: 8px 12px; /* Adjust padding for smaller items */
+                font-size: 14px; /* Adjust font size */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header_top_section">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="header_top_main">
+                        <div class="call_text"><a href="#"><span class="padding_right0"><i class="fa fa-phone" aria-hidden="true"></i></span> Call : +01 1234567890</a></div>
+                        <div class="call_text_2"><a href="#"><span class="padding_right0"><i class="fa fa-envelope" aria-hidden="true"></i></span> demo@gmail.com</a></div>
+                        <div class="call_text_1"><a href="#"><span class="padding_right0"><i class="fa fa-map-marker" aria-hidden="true"></i></span> Location</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header_section" style="padding: 10px 0;">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light" style="padding: 10px 0;">
+                <div class="d-flex justify-content-start align-items-center" style="margin-bottom: 0;">
+                    <div class="d-flex flex-column" style="margin-right: 10px;">
+                        <img src="{{ doctor.profile_pic.url }}" alt="Profile Pic" style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 5px;">
+                        <div class="text-center">
+                            <h6 style="margin: 0; color: white; font-size: 14px;">Doctor</h6>
+                            <h2 style="margin: 0; color: white; font-size: 20px;">{{request.user.first_name}}</h2>
+                        </div>
+                    </div>
+                    <a class="navbar-brand mx-auto" href="index.html" style="max-width: 150px; margin-left: auto; margin-right: auto;">
+                        <img src="{% static 'images/logo.png' %}" alt="Medwin Logo" style="width: 100%; height: auto; margin-left: 350px; " />
+                    </a>
+                </div>
 
+                <div class="collapse navbar-collapse" id="navbarSupportedContent" style="padding-top: 0;">
+                    <ul class="navbar-nav ml-auto" style="font-size: 10px;">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="{% url 'index' %}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'about' %}">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'dept' %}">Treatment</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'doc' %}">Doctors</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
 
+            <div class="custom_bg">
+                <div class="custom_menu">
+                    <ul>
+                        <li class="active"><a href="/doctor-dashboard">Dashboard</a></li>
+                        <li><a href="/doctor-patient">Patient</a></li>
+                        <li><a href="/doctor-appointment">Appointment</a></li>
+                        <li><a href="{% url 'chat-view' %}">Chat with Patients</a></li>
+                    </ul>
+                </div>
+                <form class="form-inline my-2 my-lg-0">
+                    <div class="search_btn">
+                        <li><a href="{% url 'logout' %}"><i class="fa fa-user" aria-hidden="true"></i><span class="signup_text">Logout</span></a></li>
+                        <li><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a></li>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <br><br><br>
+    {% block content %}<br><br><br>
+    {% endblock content %}
+    <div class="footer_section">
+        <div class="container">
+            <div class="input_bt">
+                <input type="text" class="mail_bt" placeholder="Enter Your Email" name="Enter your email">
+                <span class="subscribe_bt" id="basic-addon2"><a href="#">Subscribe</a></span>
+            </div>
+            <div class="footer_section_2">
+                <div class="row">
+                    <div class="col-lg-3 col-sm-6">
+                        <h3 class="footer_taital">Address</h3>
+                        <div class="location_main">
+                            <ul>
+                                <li><a href="#"><i class="fa fa-map-marker" aria-hidden="true"></i><span class="padding_15">Making this the first true</span></a></li>
+                                <li><a href="#"><i class="fa fa-phone" aria-hidden="true"></i><span class="padding_15">Call : +01 1234567890</span></a></li>
+                                <li><a href="#"><i class="fa fa-envelope" aria-hidden="true"></i><span class="padding_15">Email : demo@gmail.com</span></a></li>
+                            </ul>
+                        </div>
+                        <div class="footer_social_icon">
+                            <ul>
+                                <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                                <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                                <li><a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+                                <li><a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <h3 class="footer_taital">Useful Link</h3>
+                        <div class="footer_menu">
+                            <ul>
+                                <li><a href="index.html">Home</a></li>
+                                <li class="active"><a href="about.html">About</a></li>
+                                <li><a href="doctors.html">Doctors</a></li>
+                                <li><a href="news.html">News</a></li>
+                                <li><a href="treatment.html">Treatment</a></li>
+                                <li><a href="contact.html">Contact Us</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <h3 class="footer_taital">Help & Support</h3>
+                        <p class="ipsum_text">Opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page</p>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <h3 class="footer_taital">News</h3>
+                        <div class="dryfood_text"><img src="{% static 'images/img-4.png' %}"><span class="padding_15">Normal distribution</span></div>
+                        <div class="dryfood_text"><img src="{% static 'images/img-5.png' %}"><span class="padding_15">Normal distribution</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="copyright_section">
+        <div class="container">
+            <p class="copyright_text">2024 All Rights Reserved. Design by <a href="https://html.design">Free Html Templates</a></p>
+        </div>
+    </div>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/jquery-3.0.0.min.js' %}"></script>
+    <script src="{% static 'js/plugin.js' %}"></script>
+    <script src="{% static 'js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+    <script src="https:cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+    <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+    <script>
+        $('#datepicker').datepicker({
+            uiLibrary: 'bootstrap'
+        });
+    </script>
+    <script>
+        $('#timepicker').timepicker({
+            uiLibrary: 'bootstrap'
+        });
+    </script>
+</body>
+</html> {% endcomment %}

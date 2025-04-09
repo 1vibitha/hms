@@ -1,0 +1,20 @@
+{% extends "patient_base.html" %}
+{% block content %}
+<h2>Available Rooms</h2>
+<table>
+    <tr>
+        <th>Room Number</th>
+        <th>Type</th>
+        <th>Price Per Day</th>
+        <th>Action</th>
+    </tr>
+    {% for room in rooms %}
+    <tr>
+        <td>{{ room.room_number }}</td>
+        <td>{{ room.get_room_type_display }}</td>
+        <td>{{ room.price_per_day }}</td>
+        <td><a href="{% url 'book_room' %}">Book Now</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

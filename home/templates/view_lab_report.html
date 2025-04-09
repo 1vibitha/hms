@@ -1,0 +1,22 @@
+{% extends 'patient_base.html' %}
+{% load static %}
+{% block content %}
+<br><br><br>
+
+<div class="invoice-box">
+    <h2 style="text-align: center;">Lab Test Reports</h2>
+    {% if lab_reports %}
+        <ul>
+            {% for report in lab_reports %}
+                <li>
+                    <b>{{ report.test_name }}</b> - 
+                    <a href="{{ report.report_file.url }}" target="_blank">Download Report</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p style="text-align: center;">No lab reports available.</p>
+    {% endif %}
+</div>
+
+{% endblock content %}

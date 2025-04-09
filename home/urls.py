@@ -60,7 +60,6 @@ urlpatterns = [
     path('download-pdf/<int:pk>', views.download_pdf_view,name='download-pdf'),
 
     path('create-razorpay-order/<int:pk>/', views.create_razorpay_order, name='create-razorpay-order'),
-
     # Handle payment success (redirected after Razorpay checkout)
     path('payment-success/', views.payment_success, name='payment-success'),
 
@@ -134,4 +133,31 @@ urlpatterns = [
     path('patient-rooms/', views.room_view, name='patient-rooms'),
     path('bookings/delete/<int:booking_id>/', views.delete_booking, name='delete-booking'),
     path('rooms/<int:room_id>/occupied/', views.occupied_details, name='occupied-details'),
+
+
+
+    path('emergency-alert/', views.emergency_alert_view, name='emergency-alert'),
+    path('view-emergency-alerts/', views.view_emergency_alerts, name='view-emergency-alerts'),
+    path('resolve-alert/<int:alert_id>/', views.resolve_alert, name='resolve-alert'),
+    
+    path('request-ambulance/', views.request_ambulance, name='request_ambulance'),
+    path('ambulance/', views.ambulance, name='ambulance'),
+
+    path('ambulance-status/', views.ambulance_status, name='ambulance_status'),
+    path('manage-ambulance/', views.manage_ambulance_requests, name='manage_ambulance_requests'),
+    path('update-ambulance/<int:booking_id>/<str:status>/', views.update_ambulance_status, name='update_ambulance_status'),
+
+    path('labtest/', views.labtest, name='labtest'),
+    path('book-lab-test/', views.book_lab_test, name='book_lab_test'),
+    path('view-booked-tests/', views.view_booked_tests, name='view_booked_tests'),
+    path('upload-lab-report/<int:test_id>/', views.upload_lab_report, name='upload_lab_report'),
+    path('lab-report/<int:patientId>/', views.view_lab_report, name='view-lab-report'),
+    path('patient-lab-tests/', views.patient_lab_tests_view, name='patient_lab_tests'),
+
+
+    path('doctor-appointment-management/', views.doctor_appointment_management, name='doctor-appointment-management'),
+
+
+
+
 ]

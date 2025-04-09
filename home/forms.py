@@ -298,21 +298,6 @@ from django import forms
 import json
 from .models import PatientDischargeDetails,RoomBooking
 
-class PrescriptionForm(forms.ModelForm):
-    medicines_json = forms.CharField(widget=forms.HiddenInput(), required=False)
-
-    class Meta:
-        model = PatientDischargeDetails
-        fields = []
-
-    def clean_medicines_json(self):
-        """ Validate and parse medicine data """
-        try:
-            medicines = json.loads(self.cleaned_data['medicines_json'])
-            return json.dumps(medicines)
-        except json.JSONDecodeError:
-            raise forms.ValidationError("Invalid medicine data format.")
-
 from django import forms
 from .models import RoomBooking, Room
 
@@ -333,4 +318,92 @@ class RoomBookingForm(forms.ModelForm):
         widgets = {
             'start_date': forms.DateInput(attrs={'type': 'date'}),
             'end_date': forms.DateInput(attrs={'type': 'date'}),
+
         }
+
+
+from django import forms
+from .models import LabTestBooking,LabTestPrescription
+
+# from django import forms
+from .models import LabTestBooking
+from bootstrap_datepicker_plus.widgets import DateTimePickerInput  # Use Bootstrap DateTime Picker
+from django import forms
+from .models import LabTestPrescription, LabTestBooking, TEST_CHOICES
+from django.forms.widgets import DateTimeInput
+
+class LabTestPrescriptionForm(forms.ModelForm):
+    test_name = forms.ChoiceField(choices=TEST_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = LabTestPrescription
+        fields = ['test_name']
+
+class LabTestBookingForm(forms.ModelForm):
+    test_name = forms.ChoiceField(choices=TEST_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
+    booking_date = forms.DateTimeField(
+        widget=DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'})
+    )
+
+    class Meta:
+        model = LabTestBooking
+        fields = ['test_name', 'booking_date']
+
+
+# TEST_CHOICES = [
+#     ('Blood Test', 'Blood Test'),
+#     ('X-Ray', 'X-Ray'),
+#     ('MRI Scan', 'MRI Scan'),
+#     ('CT Scan', 'CT Scan'),
+#     ('Urine Test', 'Urine Test'),
+#     ('ECG', 'ECG'),
+# ]
+
+# class LabTestBookingForm(forms.ModelForm):
+#     test_name = forms.ChoiceField(choices=TEST_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
+#     booking_date = forms.DateTimeField(
+#         widget=DateTimePickerInput(attrs={'class': 'form-control', 'placeholder': 'Select Date & Time'})
+#     )
+
+#     class Meta:
+#         model = LabTestBooking
+#         fields = ['test_name', 'booking_date']
+
+# class LabTestPrescriptionForm(forms.ModelForm):
+#     test_name = forms.ChoiceField(choices=TEST_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
+
+#     class Meta:
+#         model = LabTestPrescription
+#         fields = ['test_name']
+
+
+
+from django import forms
+from .models import EmergencyAlert
+
+class EmergencyAlertForm(forms.ModelForm):
+    class Meta:
+        model = EmergencyAlert
+        fields = ['emergency_type', 'location']
+        widgets = {
+            'location': forms.Textarea(attrs={'rows': 2}),
+        }
+
+
+from django import forms
+from .models import AmbulanceBooking
+
+class AmbulanceBookingForm(forms.ModelForm):
+    class Meta:
+        model = AmbulanceBooking
+        fields = ['location']
+
+
+
+from django import forms
+from .models import Prescription
+
+class PrescriptionForm(forms.ModelForm):
+    class Meta:
+        model = Prescription
+        fields = ['medicine_name', 'dosage', 'duration']

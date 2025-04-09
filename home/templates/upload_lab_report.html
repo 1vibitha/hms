@@ -1,0 +1,14 @@
+{% extends 'admin_base.html' %}
+{% block content %}
+<br><br><br><br>
+<br><br><br><br>
+
+<br><br><br><br>
+
+<h2>Upload Lab Report for {{ lab_test.test_name }}</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="report">
+    <button type="submit">Upload</button>
+</form>
+{% endblock %}

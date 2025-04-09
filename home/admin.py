@@ -55,7 +55,17 @@ class ChatMessageAdmin(admin.ModelAdmin):
 admin.site.register(ChatMessage, ChatMessageAdmin)
 
 from django.contrib import admin
-from .models import Room, RoomBooking, Patient
+from .models import Room, RoomBooking, Patient,EmergencyAlert,Prescription,LabTestBooking,LabTestPrescription
 
 admin.site.register(Room)
 admin.site.register(RoomBooking)
+admin.site.register(EmergencyAlert)
+admin.site.register(Prescription)
+from django.contrib import admin
+from .models import AmbulanceBooking
+
+@admin.register(AmbulanceBooking)
+class AmbulanceBookingAdmin(admin.ModelAdmin):
+    list_display = ('patient', 'location', 'booking_time', 'status')
+admin.site.register(LabTestBooking)
+admin.site.register(LabTestPrescription)

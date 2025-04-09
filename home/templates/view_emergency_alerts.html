@@ -1,0 +1,28 @@
+{% extends 'patient_base.html' %}
+
+{% block content %}
+<h2>🚨 Emergency Alerts</h2>
+<table class="table">
+    <tr>
+        <th>Patient</th>
+        <th>Emergency Type</th>
+        <th>Location</th>
+        <th>Timestamp</th>
+        <th>Action</th>
+    </tr>
+    {% for alert in alerts %}
+    <tr>
+        <td>{{ alert.patient.user.username }}</td>
+        <td>{{ alert.emergency_type }}</td>
+        <td>{{ alert.location }}</td>
+        <td>{{ alert.timestamp }}</td>
+        <td>
+            <form method="POST" action="{% url 'resolve-alert' alert.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">Resolve</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

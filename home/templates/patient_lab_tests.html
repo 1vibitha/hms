@@ -1,0 +1,78 @@
+{% extends 'patient_base.html' %}
+
+{% block content %}
+
+<br><br><br><br><br>
+<br><br><br><br><br>
+ 
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h2 class="text-primary" style="font-family: 'Poppins', sans-serif; font-weight: 700; color: #2e86c1;">
+            <i class="bi bi-clipboard-pulse me-2" style="color: #3498db;"></i> My Lab Test Bookings
+        </h2>
+        <p class="text-muted" style="font-family: 'Roboto', sans-serif; color: #7f8c8d;">View your lab test results and bookings here.</p>
+    </div>
+
+    {% if lab_tests %}
+    <div class="table-responsive">
+        <table class="table table-hover shadow-lg" style="border-radius: 15px; overflow: hidden; background-color: #e3f2fd;">
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th style="font-family: 'Poppins', sans-serif;">Test Name</th>
+                    <th style="font-family: 'Poppins', sans-serif;">Booking Date</th>
+                    <th class="text-center" style="font-family: 'Poppins', sans-serif;">Report</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for test in lab_tests %}
+                <tr>
+                    <td style="font-family: 'Roboto', sans-serif;">{{ test.test_name }}</td>
+                    <td style="font-family: 'Roboto', sans-serif;">{{ test.booking_date }}</td>
+                    <td class="text-center">
+                        {% if test.report %}
+                        <a href="{{ test.report.url }}" target="_blank" class="btn btn-success btn-sm" style="font-family: 'Roboto', sans-serif; background-color: #4CAF50; border: none; border-radius: 8px;">
+                            <i class="bi bi-download me-1"></i> Download
+                        </a>
+                        {% else %}
+                        <span class="text-warning" style="font-family: 'Roboto', sans-serif;">
+                            <i class="bi bi-hourglass-split me-1"></i> Pending
+                        </span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center shadow-sm" style="border-radius: 10px; font-family: 'Roboto', sans-serif;">
+        <i class="bi bi-info-circle me-2"></i> No lab tests booked yet.
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .table-responsive {
+        margin-bottom: 20px;
+    }
+
+    .table th, .table td {
+        vertical-align: middle;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #d1e9ff; /* Light blue hover effect */
+    }
+
+    .btn-success:hover {
+        background-color: #45a049;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<br><br><br><br><br>
+
+{% endblock %}

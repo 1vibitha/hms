@@ -1,0 +1,26 @@
+{% extends "patient_base.html" %}
+{% block content %}
+<h2>My Room Bookings</h2>
+<table>
+    <tr>
+        <th>Room</th>
+        <th>Check-in Date</th>
+        <th>Check-out Date</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+    {% for booking in bookings %}
+    <tr>
+        <td>{{ booking.room.room_number }}</td>
+        <td>{{ booking.check_in_date }}</td>
+        <td>{{ booking.check_out_date|default:"Not checked out" }}</td>
+        <td>{{ "Checked Out" if booking.is_checked_out else "Active" }}</td>
+        <td>
+            {% if not booking.is_checked_out %}
+            <a href="{% url 'checkout_room' booking.id %}">Check Out</a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

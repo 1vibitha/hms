@@ -1,0 +1,101 @@
+{% extends 'patient_base.html' %}
+
+{% block content %}
+<br><br><br><br>
+<br><br><br><br>
+<br><br><br><br>
+
+
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h2 class="text-primary" style="font-family: 'Montserrat', sans-serif; font-weight: 700;">
+            <i class="bi bi-flask text-info me-2"></i> Lab Test Scheduling
+        </h2>
+        <p class="text-muted" style="font-family: 'Lato', sans-serif;">Schedule your tests with ease and precision.</p>
+    </div>
+
+    {% if prescribed_tests %}
+    <div class="card shadow-lg p-4 mb-4" style="border-radius: 20px; background: linear-gradient(135deg, #e3f2fd, #bbdefb);">
+        <h5 class="mb-3 text-info" style="font-family: 'Montserrat', sans-serif; font-weight: 600;">
+            <i class="bi bi-prescription2 text-info me-2"></i> Your Prescribed Tests
+        </h5>
+        <ul class="list-group list-group-flush">
+            {% for test in prescribed_tests %}
+            <li class="list-group-item d-flex justify-content-between align-items-center" style="background: transparent;">
+                <span style="font-family: 'Lato', sans-serif; color: #1e88e5;">{{ test.test_name }}</span>
+                <span class="badge bg-light text-muted rounded-pill" style="font-family: 'Lato', sans-serif;">
+                    <i class="bi bi-calendar-event text-info me-1"></i> {{ test.prescription_date|date:"d M Y" }}
+                </span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <div class="card shadow-lg p-5" style="border-radius: 22px; background: linear-gradient(135deg, #bbdefb, #90caf9);">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="{{ form.test_name.id_for_label }}" class="form-label" style="font-family: 'Montserrat', sans-serif; font-weight: 600; color: #1565c0;">
+                    <i class="bi bi-clipboard-pulse text-info me-2"></i> Select Lab Test
+                </label>
+                {{ form.test_name }}
+            </div>
+            <div class="mb-4">
+                <label for="{{ form.booking_date.id_for_label }}" class="form-label" style="font-family: 'Montserrat', sans-serif; font-weight: 600; color: #1565c0;">
+                    <i class="bi bi-calendar-range text-info me-2"></i> Choose Date & Time
+                </label>
+                <div style="width: 100%; max-width: 400px;">
+                    {{ form.booking_date }}
+                </div>
+            </div>
+            <button type="submit" class="btn btn-info btn-lg" style="border-radius: 12px; font-family: 'Montserrat', sans-serif; font-weight: 600;">
+                <i class="bi bi-calendar-check text-white me-2"></i> Confirm Booking
+            </button>
+        </form>
+    </div>
+</div>
+
+<style>
+    .container {
+        max-width: 800px;
+        margin: auto;
+    }
+
+    .card {
+        border: none;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 25px rgba(0, 0, 0, 0.18);
+    }
+
+    .btn-info {
+        background: linear-gradient(135deg, #29b6f6, #03a9f4);
+        border: none;
+        color: white;
+    }
+
+    .form-label {
+        font-weight: 600;
+    }
+
+    .form-control {
+        border-radius: 12px;
+    }
+
+    .list-group-item {
+        border: none;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<br><br><br><br><br>
+
+{% endblock %}

@@ -1,209 +1,356 @@
-{% extends 'doctor_base.html' %}
+{% extends 'base.html' %}
+
 {% block content %}
-<br><br><br><br><br>
-<br><br><br><br><br>
-
-<style>
-    .containers {
-        max-width: 1100px;
-        margin: 70px auto;
-        padding: 70px;
-        background: linear-gradient(135deg, #e0f7fa, #f0f4f8);
-        border-radius: 35px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    }
-
-    .container h2 {
-        text-align: center;
-        margin-bottom: 60px;
-        color: #263238;
-        font-weight: 900;
-        font-size: 4.5em;
-        text-transform: uppercase;
-        letter-spacing: 3px;
-        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.15);
-        position: relative;
-        padding-bottom: 20px;
-        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-    }
-
-    .container h2::before,
-    .container h2::after {
-        content: '';
-        position: absolute;
-        width: 70px;
-        height: 4px;
-        bottom: -18px;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-
-    .container h2::after {
-        width: 40px;
-        bottom: -24px;
-    }
-
-    .form-group {
-        margin-bottom: 50px;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 20px;
-        color: #37474f;
-        font-weight: 800;
-        font-size: 1.3em;
-        letter-spacing: 1.5px;
-        text-transform: capitalize;
-    }
-
-    .medicine-input-row {
-        display: flex;
-        align-items: center;
-        margin-bottom: 25px;
-    }
-
-    .medicine-input-row input {
-        flex-grow: 1;
-        padding: 20px 30px;
-        border: none;
-        border-radius: 15px;
-        margin-right: 25px;
-        font-size: 1.2em;
-        box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.12);
-        transition: box-shadow 0.3s ease;
-    }
-
-    .medicine-input-row input:focus {
-        box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.18);
-    }
-
-    .remove-medicine-btn {
-        background-color: #e57373;
-        color: white;
-        padding: 14px 20px;
-        border: none;
-        border-radius: 12px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        font-weight: 600;
-    }
-
-    .remove-medicine-btn:hover {
-        background-color: #d32f2f;
-        transform: translateY(-4px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    #medicine-list {
-        background-color: rgba(255, 255, 255, 0.85);
-        padding: 35px;
-        border-radius: 25px;
-        margin-bottom: 40px;
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.18);
-        backdrop-filter: blur(10px);
-    }
-
-    #medicine-list p {
-        margin-bottom: 18px;
-        line-height: 1.8;
-        color: #333;
-        font-size: 1.1em;
-        font-weight: 500;
-    }
-
-    #medicine-list p:last-child {
-        margin-bottom: 0;
-    }
-
-    button[type="button"],
-    button[type="submit"] {
-        background: linear-gradient(to right, #4fc3f7, #81d4fa);
-        color: white;
-        padding: 20px 35px;
-        border: none;
-        border-radius: 15px;
-        cursor: pointer;
-        font-size: 1.3em;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        font-weight: 700;
-    }
-
-    button[type="button"]:hover,
-    button[type="submit"]:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    }
-
-    button[type="button"] {
-        background: linear-gradient(to right, #64b5f6, #90caf9);
-        margin-top: 25px;
-    }
-</style>
-
-<div class="containers">
-    <h2 class="text-center"><b>Approve Patient Discharge & Prescribe Medicines</b></h2>
-    <br>
-    <form method="POST">
-        {% csrf_token %}
-
-        <div class="form-group">
-            <label>Prescribed Medicines:</label>
-            <div id="medicine-list"></div>
-            <button type="button" onclick="addMedicineInput()">Add Medicine</button>
+<div class="container" data-component="prescription-container">
+    <h2 data-element="page-title">Prescribe Medicine for {{ patient.get_name }}</h2>
+    
+    <div data-component="prescription-panel">
+        <div data-section="panel-header">
+            <svg data-element="header-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+            </svg>
+            <h3>Medical Prescription</h3>
         </div>
-
-        <input type="hidden" name="medicines_json" id="medicines-json">
-
-        <button type="submit" class="btn btn-success">Approve Discharge & Save Prescription</button>
-    </form>
+        
+        <div data-section="patient-metadata">
+            <div data-element="patient-block">
+                <span data-element="patient-label">Patient</span>
+                <h4 data-element="patient-name">{{ patient.get_name }}</h4>
+                <p data-element="patient-identifier">ID: {{ patient.id }}</p>
+            </div>
+            <div data-element="doctor-block">
+                <span data-element="doctor-label">Physician</span>
+                <h4 data-element="doctor-name">Dr. {{ request.user.get_full_name|default:"Attending Physician" }}</h4>
+                <p data-element="timestamp">{% now "F j, Y" %}</p>
+            </div>
+        </div>
+        
+        <div data-section="medical-alert">
+            <svg data-element="alert-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <p>Please review patient allergies and current medications before prescribing.</p>
+        </div>
+        
+        <form method="post" data-component="prescription-form">
+            {% csrf_token %}
+            
+            <h4 data-element="form-section-title">Prescription Details</h4>
+            
+            <div data-section="form-grid">
+                {% for field in form %}
+                    <div data-field="{{ field.name }}">
+                        <label for="{{ field.id_for_label }}" data-element="field-label">
+                            {{ field.label }}
+                            {% if field.field.required %}<span data-element="required-indicator">*</span>{% endif %}
+                        </label>
+                        
+                        {{ field }}
+                        
+                        {% if field.help_text %}
+                            <p data-element="help-text">{{ field.help_text }}</p>
+                        {% endif %}
+                        
+                        {% if field.errors %}
+                            <div data-element="validation-error">
+                                {% for error in field.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <div data-section="action-bar">
+                {% comment %} <a href="{% url 'doctor-approve-discharge' %}" data-element="secondary-action">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m15 18-6-6 6-6"/>
+                    </svg>
+                    Back to List
+                </a> {% endcomment %}
+                <button type="submit" data-element="primary-action">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14"/>
+                        <path d="M12 5v14"/>
+                    </svg>
+                    Finalize Discharge
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
-<script>
-    let medicines = [];
-
-    function addMedicineInput() {
-        const medicineList = document.getElementById("medicine-list");
-        const medicineRow = document.createElement("div");
-        medicineRow.className = "medicine-input-row";
-
-        medicineRow.innerHTML = `
-            <input type="text" placeholder="Medicine Name" class="medicine-name" required>
-            <input type="text" placeholder="Dosage" class="medicine-dosage" required>
-            <input type="text" placeholder="Instructions (optional)" class="medicine-instructions">
-            <button type="button" class="remove-medicine-btn" onclick="removeMedicineInput(this)">Remove</button>
-        `;
-
-        medicineList.appendChild(medicineRow);
+<style>
+    /* Root styling with light blue theme */
+    [data-component="prescription-container"] {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", sans-serif;
+        color: #334155;
+        line-height: 1.6;
+        background-color: #f0f9ff;
+        padding: 1.5rem 0;
     }
-
-    function removeMedicineInput(button) {
-        button.parentElement.remove();
-        updateMedicinesArray();
+    
+    /* Page title with light blue accent */
+    [data-element="page-title"] {
+        color: #0369a1;
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-bottom: 0.75rem;
+        font-weight: 600;
     }
-
-    function updateMedicinesArray() {
-        const medicineRows = document.querySelectorAll(".medicine-input-row");
-        medicines = Array.from(medicineRows).map(row => ({
-            name: row.querySelector(".medicine-name").value.trim(),
-            dosage: row.querySelector(".medicine-dosage").value.trim(),
-            instructions: row.querySelector(".medicine-instructions").value.trim(),
-        })).filter(m => m.name && m.dosage);
-
-        document.getElementById("medicines-json").value = JSON.stringify(medicines);
-        console.log("Updated Medicines JSON:", medicines);
+    
+    [data-element="page-title"]::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, #0284c7, #38bdf8);
+        border-radius: 2px;
     }
-
-    document.querySelector("form").addEventListener("submit", function(event) {
-        updateMedicinesArray();
-
-        if (document.getElementById("medicines-json").value === "[]") {
-            alert("Please add at least one medicine before approving discharge.");
-            event.preventDefault();
-        }
-    });
-</script>
-
+    
+    /* Main panel with light blue theme */
+    [data-component="prescription-panel"] {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(56, 189, 248, 0.1), 0 5px 10px rgba(56, 189, 248, 0.05);
+        padding: 0;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(186, 230, 253, 0.5);
+    }
+    
+    /* Panel header */
+    [data-section="panel-header"] {
+        background: linear-gradient(135deg, #0ea5e9, #7dd3fc);
+        color: white;
+        padding: 1.25rem 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    [data-section="panel-header"] h3 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.25rem;
+    }
+    
+    [data-element="header-icon"] {
+        color: white;
+    }
+    
+    /* Patient metadata section */
+    [data-section="patient-metadata"] {
+        display: flex;
+        justify-content: space-between;
+        padding: 2rem;
+        background-color: #f0f9ff;
+        border-bottom: 1px solid #bae6fd;
+    }
+    
+    [data-element="patient-block"],
+    [data-element="doctor-block"] {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    [data-element="patient-label"],
+    [data-element="doctor-label"] {
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        color: #0284c7;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    [data-element="patient-name"],
+    [data-element="doctor-name"] {
+        margin: 0 0 0.25rem 0;
+        color: #0369a1;
+        font-weight: 600;
+    }
+    
+    [data-element="patient-identifier"],
+    [data-element="timestamp"] {
+        color: #64748b;
+        margin: 0;
+        font-size: 0.875rem;
+    }
+    
+    /* Alert section */
+    [data-section="medical-alert"] {
+        background-color: #e0f2fe;
+        padding: 1rem 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    [data-element="alert-icon"] {
+        color: #0ea5e9;
+        flex-shrink: 0;
+    }
+    
+    [data-section="medical-alert"] p {
+        margin: 0;
+        color: #0c4a6e;
+        font-weight: 500;
+        font-size: 0.925rem;
+    }
+    
+    /* Form container */
+    [data-component="prescription-form"] {
+        padding: 2rem;
+    }
+    
+    [data-element="form-section-title"] {
+        color: #0369a1;
+        margin: 0 0 1.5rem 0;
+        font-weight: 600;
+        border-bottom: 1px solid #bae6fd;
+        padding-bottom: 0.75rem;
+    }
+    
+    /* Form grid */
+    [data-section="form-grid"] {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    /* Field styling */
+    [data-element="field-label"] {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #334155;
+    }
+    
+    [data-element="required-indicator"] {
+        color: #ef4444;
+        margin-left: 0.25rem;
+    }
+    
+    /* Style all inputs coming directly after a label */
+    [data-element="field-label"] + input,
+    [data-element="field-label"] + select,
+    [data-element="field-label"] + textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #bae6fd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        background-color: #f8fafc;
+    }
+    
+    [data-element="field-label"] + input:focus,
+    [data-element="field-label"] + select:focus,
+    [data-element="field-label"] + textarea:focus {
+        border-color: #38bdf8;
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+        outline: none;
+        background-color: white;
+    }
+    
+    [data-element="help-text"] {
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+        color: #64748b;
+    }
+    
+    [data-element="validation-error"] {
+        margin-top: 0.5rem;
+        color: #ef4444;
+        font-size: 0.85rem;
+    }
+    
+    /* Action bar */
+    [data-section="action-bar"] {
+        display: flex;
+        justify-content: space-between;
+        border-top: 1px solid #bae6fd;
+        padding-top: 1.5rem;
+        margin-top: 1rem;
+    }
+    
+    [data-element="secondary-action"] {
+        text-decoration: none;
+        padding: 0.75rem 1.25rem;
+        background-color: #e0f2fe;
+        color: #0369a1;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        border: 1px solid #bae6fd;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+    }
+    
+    [data-element="secondary-action"]:hover {
+        background-color: #bae6fd;
+    }
+    
+    [data-element="primary-action"] {
+        padding: 0.75rem 1.25rem;
+        background: linear-gradient(to right, #0284c7, #38bdf8);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    [data-element="primary-action"]:hover {
+        background: linear-gradient(to right, #0369a1, #0ea5e9);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(56, 189, 248, 0.2);
+    }
+    
+    /* Specific field styling with light blue accents */
+    [data-field="medicine_name"] [data-element="field-label"] {
+        color: #0ea5e9;
+    }
+    
+    [data-field="medicine_name"] input {
+        border-left: 3px solid #0ea5e9;
+    }
+    
+    [data-field="dosage"] [data-element="field-label"] {
+        color: #38bdf8;
+    }
+    
+    [data-field="dosage"] input {
+        border-left: 3px solid #38bdf8;
+    }
+    
+    [data-field="duration"] [data-element="field-label"] {
+        color: #7dd3fc;
+    }
+    
+    [data-field="duration"] input {
+        border-left: 3px solid #7dd3fc;
+    }
+    
+    [data-field="cost"] [data-element="field-label"] {
+        color: #bae6fd;
+    }
+    
+    [data-field="cost"] input {
+        border-left: 3px solid #bae6fd;
+    }
+</style>
 {% endblock %}

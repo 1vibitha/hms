@@ -37,14 +37,6 @@ class Doctor(models.Model):
         return "{} ({})".format(self.user.first_name, self.department)
 
 
-# TIME_SLOTS = [
-#     ('09:00 AM - 10:00 AM', '09:00 AM - 10:00 AM'),
-#     ('10:00 AM - 11:00 AM', '10:00 AM - 11:00 AM'),
-#     ('11:00 AM - 12:00 PM', '11:00 AM - 12:00 PM'),
-#     ('02:00 PM - 03:00 PM', '02:00 PM - 03:00 PM'),
-#     ('03:00 PM - 04:00 PM', '03:00 PM - 04:00 PM'),
-#     ('04:00 PM - 05:00 PM', '04:00 PM - 05:00 PM'),
-# ]
 class Patient(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_pic = models.ImageField(upload_to='profile_pic/PatientProfilePic/', null=True, blank=True)
@@ -86,10 +78,16 @@ class Appointment(models.Model):
     doctorId = models.PositiveIntegerField(null=True)
     patientName = models.CharField(max_length=40, null=True)
     doctorName = models.CharField(max_length=40, null=True)
-    appointmentDate = models.DateField()
+    appointmentDate = models.DateField(null=False)
     time_slot = models.CharField(max_length=20, choices=TIME_SLOTS)
     description = models.TextField(max_length=500)
     status = models.BooleanField(default=False)
+    statuss = models.CharField(
+        max_length=20,
+        choices=[('Pending', 'Pending'), ('Completed', 'Completed')],
+        default='Pending'
+    )
+
 
     class Meta:
         unique_together = ('doctorId', 'appointmentDate', 'time_slot')
@@ -111,10 +109,11 @@ class PatientDischargeDetails(models.Model):
 
     roomCharge=models.PositiveIntegerField(null=False)
     medicineCost=models.PositiveIntegerField(null=False)
+    total_lab_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     doctorFee=models.PositiveIntegerField(null=False)
     OtherCharge=models.PositiveIntegerField(null=False)
     total=models.PositiveIntegerField(null=False)
-    prescribed_medicines = models.TextField(null=True, blank=True) 
+
     def get_prescribed_medicines(self):
         """ Convert stored JSON to dictionary format """
         try:
@@ -125,16 +124,9 @@ class PatientDischargeDetails(models.Model):
 from django.db import models
 from django.contrib.auth.models import User
 
-# class ChatMessage(models.Model):
-#     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
-#     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
-#     message = models.TextField()
-#     timestamp = models.DateTimeField(auto_now_add=True)
 
-#     def __str__(self):
-#         return f"{self.sender} -> {self.receiver}: {self.message[:30]}"
 from django.db import models
- # Import Doctor & Patient models
+
 
 class ChatMessage(models.Model):
     sender_doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, null=True, blank=True, related_name="sent_messages")
@@ -170,7 +162,7 @@ class Room(models.Model):
     room_type = models.CharField(max_length=50, choices=[
         ('General', 'General'),
         ('Private', 'Private'),
-        ('ICU', 'ICU'),
+
     ])
     is_available = models.BooleanField(default=True)
 
@@ -202,3 +194,95 @@ class RoomBooking(models.Model):
         self.room.is_available = True  # Make the room available
         self.room.save()
         super().delete(*args, **kwargs)
+
+from django.db import models
+from django.utils.timezone import now
+from django.contrib.auth.models import User  # Assuming Patient is linked to User
+
+class EmergencyAlert(models.Model):
+    patient = models.ForeignKey('Patient', on_delete=models.CASCADE)
+    emergency_type = models.CharField(max_length=100, choices=[
+        ('Heart Attack', 'Heart Attack'),
+        ('Accident', 'Accident'),
+        ('Breathing Issue', 'Breathing Issue'),
+        ('Other', 'Other'),
+    ])
+    location = models.TextField()
+    timestamp = models.DateTimeField(default=now)
+    is_resolved = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Emergency by {self.patient.user.username} - {self.emergency_type}"
+
+
+from django.db import models
+from django.utils.timezone import now
+
+from django.db import models
+from django.utils.timezone import now
+
+class AmbulanceBooking(models.Model):
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Accepted', 'Accepted'),
+         ('Completed', 'Completed'),
+        ('Cancelled', 'Cancelled'),
+    ]
+
+    patient = models.ForeignKey('Patient', on_delete=models.CASCADE)
+    location = models.TextField()
+    booking_time = models.DateTimeField(default=now)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
+
+    def __str__(self):
+        return f"Ambulance Request by {self.patient.user.username} - {self.status}"
+
+
+# from django.db import models
+# from home.models import Patient
+# class LabTestPrescription(models.Model):
+#     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+#     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+#     test_name = models.CharField(max_length=255)
+#     prescription_date = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return f"{self.test_name} prescribed to {self.patient.user.first_name}"
+
+
+# class LabTestBooking(models.Model):
+#     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+#     test_name  = models.ForeignKey(LabTestPrescription, on_delete=models.CASCADE)
+#     booking_date = models.DateTimeField()  # Allow user selection
+#     report = models.FileField(upload_to='lab_reports/', null=True, blank=True)  # PDF report upload
+
+#     def __str__(self):
+#         return f"{self.test_name}"
+
+TEST_CHOICES = [
+    ('Blood Test', 'Blood Test'),
+    ('X-Ray', 'X-Ray'),
+    ('MRI Scan', 'MRI Scan'),
+    ('CT Scan', 'CT Scan'),
+    ('Urine Test', 'Urine Test'),
+    ('ECG', 'ECG'),
+]
+
+class LabTestPrescription(models.Model):
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    test_name = models.CharField(max_length=255, choices=TEST_CHOICES)
+    prescription_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.test_name} prescribed to {self.patient.user.first_name}"
+
+class LabTestBooking(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    test_name = models.CharField(max_length=255, choices=TEST_CHOICES)
+    booking_date = models.DateTimeField()
+    report = models.FileField(upload_to='lab_reports/', null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.test_name} booked by {self.patient.user.first_name}"
+

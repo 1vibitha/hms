@@ -4,5 +4,8 @@
 {%include 'patient_dashboard_cards.html'%}
 <br><br><br><br>
 
-
+<form method="POST" action="{% url 'emergency-alert' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">🚨 SOS Emergency Alert</button>
+</form>
 {% endblock content %}

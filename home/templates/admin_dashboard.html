@@ -4,6 +4,36 @@
 {% load static %}
 
 {% include "admin_dashboard_cards.html" %}
+{% comment %} <div class="custom_bg">
+    <div class="custom_menu">
+        <button onclick="location.href='{% url 'view-emergency-alerts' %}'" class="custom_button active">Emergency staus</button>
+       
+    </div>
+</div> {% endcomment %}
+
+<style>
+
+    .custom_button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: 0.3s;
+    }
+
+    .custom_button:hover {
+        background-color: #0056b3;
+    }
+
+    .custom_button.active {
+        background-color: #28a745;
+    }
+</style>
+
+
 <!-- doctores section start -->
 <div class="doctores_section margim_90">
     <div class="container">

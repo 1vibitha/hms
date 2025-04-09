@@ -1,0 +1,31 @@
+{% extends 'patient_base.html' %}
+{% block content %}
+<br><br><br>
+<div class="container">
+    <h2 class="text-center">Lab Reports for {{ patient.get_name }}</h2>
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>Test Name</th>
+                <th>Booking Date</th>
+                <th>Report</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for test in lab_reports %}
+            <tr>
+                <td>{{ test.test_name }}</td>
+                <td>{{ test.booking_date }}</td>
+                <td>
+                    {% if test.report_url %}
+                        <a href="{{ test.report_url }}" target="_blank" class="btn btn-primary">Download Report</a>
+                    {% else %}
+                        <span class="text-danger">Report Not Available</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

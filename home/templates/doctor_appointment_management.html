@@ -1,0 +1,96 @@
+{% extends 'doctor_base.html' %}
+{% block content %}
+<br><br><br><br><br>
+
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h2 class="text-primary">
+            <i class="bi bi-calendar-check me-2"></i> Doctor's Appointment Dashboard
+        </h2>
+        <p class="text-muted">Manage your patient appointments with ease.</p>
+    </div>
+
+    {% if current_appointment %}
+    <div class="card shadow-lg p-4 mb-4">
+        <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-person-fill text-success me-3" style="font-size: 2rem;"></i>
+            <div>
+                <h4 class="mb-1 text-success">
+                    Current Patient: 
+                    {% if current_patient %} 
+                        {{ current_patient.user.get_full_name }} 
+                    {% else %} 
+                        Unknown Patient 
+                    {% endif %}
+                </h4>
+                <p class="text-muted mb-0"><i class="bi bi-clock me-1"></i> {{ current_appointment.time_slot }}</p>
+            </div>
+        </div>
+        <p><i class="bi bi-file-earmark-medical me-2"></i> <strong>Symptoms:</strong> {{ current_description }}</p>
+
+        <!-- Prescription Form -->
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" name="prescribe_lab_test" class="btn btn-success mt-2">
+                <i class="bi bi-plus-circle"></i> Prescribe Lab Test
+            </button>
+        </form>
+    </div>
+
+    <!-- Next Appointment Button -->
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" name="next_appointment" class="btn btn-primary">
+            <i class="bi bi-arrow-right-circle"></i> Next Appointment
+        </button>
+    </form>
+
+    {% else %}
+    <div class="alert alert-warning text-center">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> No current appointments at this time.
+    </div>
+    {% endif %}
+
+    <!-- Next Appointment Info -->
+    {% if next_appointment %}
+    <div class="card shadow-md p-4 mb-4">
+        <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-calendar-event-fill text-secondary me-3" style="font-size: 2rem;"></i>
+            <div>
+                <h5 class="mb-1 text-secondary">
+                    <i class="bi bi-calendar-event me-2"></i> Next Appointment:
+                </h5>
+                <p class="mb-0"><i class="bi bi-person me-1"></i> {{ next_appointment.patient.user.get_full_name }}</p>
+                <p class="mb-0"><i class="bi bi-clock me-1"></i> {{ next_appointment.time_slot }}</p>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-secondary text-center">
+        <i class="bi bi-calendar-x-fill me-2"></i> No further appointments for today.
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .container {
+        max-width: 800px;
+        margin: auto;
+    }
+    .card {
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+    .btn-success, .btn-primary {
+        border-radius: 8px;
+    }
+    .alert {
+        border-radius: 10px;
+    }
+</style>
+
+{% endblock %}

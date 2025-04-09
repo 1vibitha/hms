@@ -5,41 +5,70 @@
 <br><br><br><br><br>
 <br><br><br><br><br>
 
-
 <div class="container">
-    <h2 class="text-center mb-4">Payment History</h2>
+    <h2 class="text-center mb-4" style="color: #1976d2; font-weight: 600;">Payment History</h2>
 
     {% if payment_history %}
-    <table class="table table-bordered table-striped">
-        <thead class="thead-dark">
-            <tr>
-                <th>SN</th>
-                <th>Date</th>
-                <th>Total Amount</th>
-                <th>Doctor</th>
-                <th>Download Invoice</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for payment in payment_history %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ payment.releaseDate }}</td>
-                <td>₹{{ payment.total }}</td>
-                <td>{{ payment.assignedDoctorName }}</td>
-                <td>
-                    <a href="{% url 'download_pdf' payment.patientId %}" class="btn btn-primary btn-sm">
-                        <i class="glyphicon glyphicon-download"></i> Download PDF
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped" style="border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <thead class="thead-light" style="background-color: #e3f2fd; color: #1565c0;">
+                <tr>
+                    <th style="padding: 15px; font-weight: 600;">SN</th>
+                    <th style="padding: 15px; font-weight: 600;">Date</th>
+                    <th style="padding: 15px; font-weight: 600;">Total Amount</th>
+                    <th style="padding: 15px; font-weight: 600;">Doctor</th>
+                    <th style="padding: 15px; font-weight: 600;">Payment Status</th>
+                    <th style="padding: 15px; font-weight: 600;">Download Invoice</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in payment_history %}
+                <tr>
+                    <td style="padding: 12px;">{{ forloop.counter }}</td>
+                    <td style="padding: 12px;">{{ payment.releaseDate }}</td>
+                    <td style="padding: 12px;">₹{{ payment.total }}</td>
+                    <td style="padding: 12px;">{{ payment.assignedDoctorName }}</td>
+                    <td style="padding: 12px; text-align: center;">
+                        {% if payment.payment_done %}
+                            <span class="badge badge-success">Paid</span>
+                        {% else %}
+                            <span class="badge badge-warning">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 12px; text-align: center;">
+                        <a href="{% url 'download-pdf' payment.patientId %}" class="btn btn-primary btn-sm" style="background: linear-gradient(to right, #29b6f6, #03a9f4); border: none; padding: 8px 15px; border-radius: 5px; color: white; transition: transform 0.2s ease;">
+                            <i class="glyphicon glyphicon-download"></i> Download PDF
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% else %}
     <h4 class="text-center text-danger mt-4">No Payment Records Found</h4>
     {% endif %}
 </div>
+
 <br><br><br><br><br>
+
+<style>
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .badge-success {
+      background-color: #28a745;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+    .badge-warning {
+      background-color: #ffc107;
+      color: black;
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
+</style>
 
 {% endblock %}

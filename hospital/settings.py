@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'home',
-   
+   "bootstrap_datepicker_plus",
  
 ]
 
@@ -148,3 +148,17 @@ import os
 
 RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID', 'rzp_test_d5VCv4MOwkIpcU')
 RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET', 'OXxDDHSLPDiM9yvqbd1SAFdN')
+
+
+INSTALLED_APPS += [
+    'channels',
+]
+
+ASGI_APPLICATION = "hospital.asgi.application"
+
+# Redis for real-time notifications
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",  # Use Redis in production
+    },
+}

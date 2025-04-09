@@ -1,13 +1,64 @@
 {% extends 'doctor_base.html' %}
 {% block content %}
+<br><br><br><br><br>
+
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-<div class="container" style="text-align: center; margin-top: 50px;">
+<style>
+    .payment-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 40px;
+        background: linear-gradient(135deg, #e1f5fe, #b3e5fc); /* Soft gradient */
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        font-family: 'Nunito', sans-serif; /* Friendly font */
+        text-align: center;
+        color: #333;
+    }
+
+    .payment-container h2 {
+        color: #1976d2;
+        margin-bottom: 30px;
+        font-weight: 700;
+        font-size: 1.8em;
+    }
+
+    .payment-container p {
+        font-size: 1.1em;
+        margin-bottom: 20px;
+        line-height: 1.6;
+    }
+
+    .payment-container strong {
+        color: #1565c0;
+        font-weight: 600;
+    }
+
+    #pay-btn {
+        background: linear-gradient(to right, #29b6f6, #03a9f4); /* Gradient button */
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1em;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    #pay-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+</style>
+<br><br><br><br><br>
+<div class="payment-container">
     <h2>Complete Payment</h2>
     <p>Patient: <strong>{{ patient.get_name }}</strong></p>
-    <p>Amount: <strong>₹{{ amount|divisibleby:100 }}</strong></p>
+    <p>Amount: <strong>₹{{ amount_in_rupees }}</strong></p>
 
-    <button id="pay-btn" class="btn btn-success">Pay Now</button>
+    <button id="pay-btn">Pay Now</button>
 </div>
 
 <script>
@@ -15,7 +66,7 @@
         "key": "{{ razorpay_key }}",
         "amount": "{{ amount }}",
         "currency": "INR",
-        "name": "Hospital Management",
+        "name": "{{ patient }}",
         "description": "Payment for medical bill",
         "order_id": "{{ order_id }}",
         "handler": function (response){

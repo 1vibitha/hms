@@ -1,0 +1,48 @@
+{% extends 'patient_base.html' %}
+{% block content %}
+<h2>My Lab Tests</h2>
+<table>
+    <tr>
+        <th>Test Name</th>
+        <th>Status</th>
+        <th>Report</th>
+    </tr>
+    {% for test in lab_tests %}
+    <tr>
+        <td>{{ test.test_name }}</td>
+        <td>{{ test.status }}</td>
+        <td>
+            {% if test.report %}
+            <a href="{{ test.report.url }}" target="_blank">Download Report</a>
+            {% else %}
+            Pending
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
+{% extends 'patient_base.html' %}
+{% block content %}
+<h2>My Lab Tests</h2>
+<table>
+    <tr>
+        <th>Test Name</th>
+        <th>Status</th>
+        <th>Report</th>
+    </tr>
+    {% for test in lab_tests %}
+    <tr>
+        <td>{{ test.test_name }}</td>
+        <td>{{ test.status }}</td>
+        <td>
+            {% if test.report %}
+            <a href="{{ test.report.url }}" target="_blank">Download Report</a>
+            {% else %}
+            Pending
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

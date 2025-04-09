@@ -1,0 +1,154 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<br><br><br><br><br>
+<br><br><br><br><br>
+
+<div class="container mt-5">
+    <h2 class="mb-4 stylish-heading">Ambulance Requests</h2>
+    <div class="row">
+        {% for booking in bookings %}
+        <div class="col-md-6 mb-4">
+            <div class="card request-card">
+                <div class="card-body">
+                    <h5 class="card-title patient-name">Patient: {{ booking.patient.user.username }}</h5>
+                    <p class="card-text location-text"><strong>Location:</strong> {{ booking.location }}</p>
+                    <p class="card-text booking-text"><strong>Booking Time:</strong> {{ booking.booking_time }}</p>
+                    <p class="card-text status-text"><strong>Status:</strong> <span class="status-badge status-{{ booking.status|lower }}">{{ booking.status }}</span></p>
+                    <div class="mt-3">
+                        <a href="{% url 'update_ambulance_status' booking.id 'Accepted' %}" class="btn btn-success btn-sm action-btn">Accept</a>
+                        <a href="{% url 'update_ambulance_status' booking.id 'Completed' %}" class="btn btn-primary btn-sm action-btn">Complete</a>
+                        <a href="{% url 'update_ambulance_status' booking.id 'Cancelled' %}" class="btn btn-danger btn-sm action-btn">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .stylish-heading {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.2rem;
+        color: #2e3d49;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        padding-bottom: 10px;
+        animation: fadeInDown 0.8s ease-out;
+        font-weight: 600;
+    }
+
+    .request-card {
+        border: none;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+        border-radius: 16px;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        background: linear-gradient(135deg, #f0f4f8, #e8eaf6);
+    }
+
+    .request-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .status-badge {
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: white;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .status-accepted {
+        background: linear-gradient(to right, #66bb6a, #4caf50);
+    }
+
+    .status-completed {
+        background: linear-gradient(to right, #42a5f5, #1e88e5);
+    }
+
+    .status-cancelled {
+        background: linear-gradient(to right, #e57373, #d32f2f);
+    }
+
+    .action-btn {
+        margin-right: 5px;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .action-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-success {
+        background: linear-gradient(to right, #66bb6a, #4caf50);
+        border: none;
+        color: white;
+    }
+
+    .btn-primary {
+        background: linear-gradient(to right, #42a5f5, #1e88e5);
+        border: none;
+        color: white;
+    }
+
+    .btn-danger {
+        background: linear-gradient(to right, #e57373, #d32f2f);
+        border: none;
+        color: white;
+    }
+
+    .btn-sm {
+        padding: 10px 18px;
+        font-size: 1rem;
+        border-radius: 6px;
+    }
+
+    /* Patient Name Style */
+    .patient-name {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #4a6572; /* Distinct, slightly darker color */
+        letter-spacing: 0.5px; /* Subtle letter spacing */
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Subtle text shadow */
+        margin-bottom: 8px; /* Added margin for spacing */
+    }
+
+    /* Text Styles */
+    .location-text, .booking-text, .status-text {
+        font-family: 'Lora', serif;
+        font-size: 1.05rem;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+<br><br><br><br><br>
+
+{% endblock %}

@@ -437,7 +437,7 @@ from . import models
 @login_required(login_url='adminlogin')
 def admin_view_patient_view(request):
     # Fetch all patients along with their latest appointment details
-    patients = models.Patient.objects.filter(status=True)
+    patients = models.Patient.objects.filter(status=True,payment_done=False)
 
     for patient in patients:
         appointment = models.Appointment.objects.filter(patientId=patient.id).order_by('-appointmentDate').first()
@@ -751,85 +751,39 @@ def admin_discharge_patient_view(request):
     logger.debug(f"Admin View: Patients Awaiting Payment or Re-Discharge: {patients_to_discharge.count()}")
 
     return render(request, 'admin_discharge_patient.html', {'patients': patients_to_discharge})
-
-
-# @login_required(login_url='adminlogin')
-# def discharge_patient_view(request, pk):
-#     patient = get_object_or_404(models.Patient, id=pk)
-
-#     # Retrieve assigned doctor correctly
-#     assigned_doctor = models.Doctor.objects.filter(id=patient.assignedDoctorId).first()
-#     assigned_doctor_name = assigned_doctor.get_name if assigned_doctor else "Doctor Not Assigned"
-
-#     days_spent = (date.today() - patient.admitDate).days
-
-#     patient_data = {
-#         'patientId': pk,
-#         'name': patient.get_name,
-#         'mobile': patient.mobile,
-#         'address': patient.address,
-#         'symptoms': patient.symptoms,
-#         'admitDate': patient.admitDate,
-#         'todayDate': date.today(),
-#         'day': days_spent,
-#         'assignedDoctorName': assigned_doctor_name,  # Corrected doctor name retrieval
-#     }
-
-#     if request.method == 'POST':
-#         try:
-#             room_charge = int(request.POST.get('roomCharge', 0)) * days_spent
-#             doctor_fee = int(request.POST.get('doctorFee', 0))
-#             medicine_cost = int(request.POST.get('medicineCost', 0))
-#             other_charge = int(request.POST.get('OtherCharge', 0))
-#             total_amount = room_charge + doctor_fee + medicine_cost + other_charge
-
-#             bill_details = {
-#                 'roomCharge': room_charge,
-#                 'doctorFee': doctor_fee,
-#                 'medicineCost': medicine_cost,
-#                 'OtherCharge': other_charge,
-#                 'total': total_amount,
-#             }
-
-#             patient_data.update(bill_details)
-
-#             discharge_details = models.PatientDischargeDetails(
-#                 patientId=pk,
-#                 patientName=patient.get_name,
-#                 assignedDoctorName=assigned_doctor_name,
-#                 address=patient.address,
-#                 mobile=patient.mobile,
-#                 symptoms=patient.symptoms,
-#                 admitDate=patient.admitDate,
-#                 releaseDate=date.today(),
-#                 daySpent=days_spent,
-#                 medicineCost=medicine_cost,
-#                 roomCharge=room_charge,
-#                 doctorFee=doctor_fee,
-#                 OtherCharge=other_charge,
-#                 total=total_amount
-#             )
-#             discharge_details.save()
-
-#             return render(request, 'patient_final_bill.html', context=patient_data)
-#         except ValueError:
-#             patient_data['error'] = "Invalid input. Please enter valid numbers."
-#             return render(request, 'patient_generate_bill.html', context=patient_data)
-
-#     return render(request, 'patient_generate_bill.html', context=patient_data)
-
-
+from datetime import date
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from home import models  # Importing your models
 @login_required(login_url='adminlogin')
 def discharge_patient_view(request, pk):
     patient = get_object_or_404(models.Patient, id=pk)
     assigned_doctor = models.Doctor.objects.filter(id=patient.assignedDoctorId).first()
-    assigned_doctor_name = assigned_doctor.get_name if assigned_doctor else "Doctor Not Assigned"
+    assigned_doctor_name = assigned_doctor.get_name if hasattr(assigned_doctor, 'get_name') else "Doctor Not Assigned"
+    appointment = models.Appointment.objects.filter(patientId=pk).first() 
+    days_spent = (date.today() - appointment.appointmentDate).days
 
-    days_spent = (date.today() - patient.admitDate).days
+ # Assuming one appointment per patient
+    # Fetch prescribed medicines
+    prescribed_medicines = models.Prescription.objects.filter(patient=patient)
+    medicine_list = [
+        {
+            'name': med.medicine_name,
+            'dosage': med.dosage,
+            'duration': med.duration,
+        }
+        for med in prescribed_medicines
+    ]
 
-    # Fetch previous discharge details if available
-    discharge_details = models.PatientDischargeDetails.objects.filter(patientId=pk).first()
-    prescribed_medicines = json.loads(discharge_details.prescribed_medicines) if discharge_details and discharge_details.prescribed_medicines else []
+    # Fetch lab test bookings
+    lab_tests = models.LabTestBooking.objects.filter(patient=patient)
+    lab_test_list = [
+        {
+            'test_name': test.test_name,
+            'booking_date': test.booking_date
+        }
+        for test in lab_tests
+    ]
 
     patient_data = {
         'patientId': pk,
@@ -841,7 +795,9 @@ def discharge_patient_view(request, pk):
         'todayDate': date.today(),
         'day': days_spent,
         'assignedDoctorName': assigned_doctor_name,
-        'prescribed_medicines': prescribed_medicines  # Include prescribed medicines
+        'prescribed_medicines': medicine_list,  # Include medicines
+        'lab_tests': lab_test_list,  # Include lab test details
+        'appointment': appointment,
     }
 
     if request.method == 'POST':
@@ -850,19 +806,23 @@ def discharge_patient_view(request, pk):
             doctor_fee = int(request.POST.get('doctorFee', 0))
             medicine_cost = int(request.POST.get('medicineCost', 0))
             other_charge = int(request.POST.get('OtherCharge', 0))
-            total_amount = room_charge + doctor_fee + medicine_cost + other_charge
+            lab_cost = int(request.POST.get('total_lab_cost', 0))  # Fixing lab test cost retrieval
+
+            # ✅ Fix: Add `lab_cost` to `total_amount`
+            total_amount = room_charge + doctor_fee + medicine_cost + other_charge + lab_cost
 
             bill_details = {
                 'roomCharge': room_charge,
                 'doctorFee': doctor_fee,
                 'medicineCost': medicine_cost,
                 'OtherCharge': other_charge,
+                'total_lab_cost': lab_cost,
                 'total': total_amount,
             }
 
             patient_data.update(bill_details)
 
-            # Save discharge details with medicine information
+            # ✅ Fix: Correct the `total_lab_cost` assignment
             discharge_details = models.PatientDischargeDetails(
                 patientId=pk,
                 patientName=patient.get_name,
@@ -874,11 +834,11 @@ def discharge_patient_view(request, pk):
                 releaseDate=date.today(),
                 daySpent=days_spent,
                 medicineCost=medicine_cost,
+                total_lab_cost=lab_cost,  # ✅ Fixed here
                 roomCharge=room_charge,
                 doctorFee=doctor_fee,
                 OtherCharge=other_charge,
                 total=total_amount,
-                prescribed_medicines=json.dumps(prescribed_medicines)  # Save as JSON
             )
             discharge_details.save()
 
@@ -888,6 +848,7 @@ def discharge_patient_view(request, pk):
             return render(request, 'patient_generate_bill.html', context=patient_data)
 
     return render(request, 'patient_generate_bill.html', context=patient_data)
+
 
 import io
 from xhtml2pdf import pisa
@@ -990,7 +951,7 @@ def doctor_view_patient_view(request):
     doctor = models.Doctor.objects.get(user_id=request.user.id)
 
     # ✅ Exclude discharged patients
-    patients = models.Patient.objects.filter(status=True, payment_done=False,assignedDoctorId=doctor.id, discharge_status=False)
+    patients = models.Patient.objects.filter(status=True, payment_done=False,assignedDoctorId=doctor.id)
 
     for patient in patients:
         appointment = models.Appointment.objects.filter(patientId=patient.id, doctorId=doctor.id).first()
@@ -1152,60 +1113,6 @@ def doc_approve_appointment(request,pk):
 
 
 #-----------------------------------------------------------------------------------------------------
-# import logging
-# from django.shortcuts import render, redirect, get_object_or_404
-# from django.contrib import messages
-# from django.contrib.auth.decorators import login_required, user_passes_test
-# from .models import Doctor, Patient, Appointment
-
-# logger = logging.getLogger(__name__)
-
-# @login_required(login_url='doctorlogin')
-# @user_passes_test(lambda u: u.groups.filter(name='DOCTOR').exists())
-# def doctor_approve_discharge_view(request):
-#     doctor = Doctor.objects.filter(user_id=request.user.id).first()
-#     if not doctor:
-#         messages.error(request, "Doctor profile not found.")
-#         return redirect('doctor-dashboard')
-
-#     # Step 1: Fetch active patients (not discharged, not readmitted, and pending payment)
-#     active_patients = Patient.objects.filter(
-#         assignedDoctorId=doctor.id,
-#         status=True,            # Currently admitted
-#         discharge_status=False, # Not yet discharged
-#         payment_done=False,     # Payment not yet done
-#         re_admit=False          # Not marked for re-admission
-#     )
-
-#     # Step 2: Fetch re-admitted patients (previously discharged but admitted again)
-#     readmitted_patients = Patient.objects.filter(
-#         assignedDoctorId=doctor.id,
-#         status=True,        # Admitted again
-#         re_admit=True       # Marked for re-admission
-#     )
-
-#     # Combine both sets of patients
-#     patients = active_patients | readmitted_patients
-
-#     # Step 3: Fetch approved appointments for these patients
-#     approved_appointments = Appointment.objects.filter(
-#         patientId__in=patients.values_list('id', flat=True),
-#         status=True  # Appointment approved
-#     )
-
-#     logger.debug(f"Doctor: {doctor.get_name}, Patients Found: {patients.count()}")
-
-#     # Step 4: Attach appointment details dynamically to each patient
-#     patient_appointments = {appt.patientId: appt for appt in approved_appointments}
-
-#     for patient in patients:
-#         appointment = patient_appointments.get(patient.id)
-#         patient.appointmentDate = ap
-# pointment.appointmentDate if appointment else "Not Scheduled"
-#         patient.time_slot = appointment.time_slot if appointment else "Not Scheduled"
-
-#     return render(request, 'doctor_approve_discharge.html', {'patients': patients, 'doctor': doctor})
-
 
 @login_required(login_url='doctorlogin')
 @user_passes_test(lambda u: u.groups.filter(name='DOCTOR').exists())
@@ -1264,83 +1171,33 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
 from .models import Patient, PatientDischargeDetails, Doctor
-
+from .forms import PrescriptionForm
 @login_required(login_url='doctorlogin')
 def approve_discharge_view(request, pk):
     """ Doctor approves discharge and prescribes medicines """
-
     patient = get_object_or_404(Patient, id=pk)
-    doctor = get_object_or_404(Doctor, user=request.user)
+    doctor = get_object_or_404(Doctor, user_id=request.user.id)
 
-    if request.method == 'POST':
-        medicines_data = request.POST.get('medicines_json', '[]').strip()
+    if request.method == "POST":
+        form = PrescriptionForm(request.POST)
+        if form.is_valid():
+            prescription = form.save(commit=False)
+            prescription.patient = patient
+            prescription.doctor = doctor
+            prescription.save()
 
-        # Handle empty or invalid JSON
-        try:
-            medicines_json = json.loads(medicines_data) if medicines_data else []
-        except json.JSONDecodeError:
-            medicines_json = []
+            # Step 4: Approve discharge after medicine entry
+            patient.discharge_status = True
+            patient.status = True
+            patient.save()
 
-        discharge = PatientDischargeDetails(
-            patientId=patient.id,
-            patientName=patient.get_name,
-            assignedDoctorName=doctor.get_name,
-            address=patient.address,
-            mobile=patient.mobile,
-            symptoms=patient.symptoms,
-            admitDate=patient.admitDate,
-            releaseDate=now().date(),
-            daySpent=(now().date() - patient.admitDate).days,
-            roomCharge=2000 * (now().date() - patient.admitDate).days,
-            doctorFee=5000,
-            OtherCharge=1000,
-            medicineCost=0,  # Admin will enter later
-            total=2000 * (now().date() - patient.admitDate).days + 5000 + 1000,
-            prescribed_medicines=json.dumps(medicines_json)  # Save as JSON
-        )
-        discharge.save()
+            messages.success(request, "Patient discharged successfully!")
+            return redirect('doctor-approve-discharge')  # Redirect back to discharge list
 
-        patient.discharge_status = True
-        patient.status = True
-        patient.save()
+    else:
+        form = PrescriptionForm()
 
-        return redirect('doctor-approve-discharge')
-
-    return render(request, 'approve_discharge.html', {'patient': patient})
-
-# @login_required(login_url='doctorlogin')
-# @user_passes_test(lambda u: u.groups.filter(name='DOCTOR').exists())
-# def approve_discharge_view(request, pk):
-#     """ Doctor approves discharge for a patient if they have no future appointments. """
-    
-#     patient = get_object_or_404(Patient, id=pk)
-
-#     # Ensure the patient is assigned to the logged-in doctor
-#     doctor = get_object_or_404(Doctor, user=request.user)
-#     if patient.assignedDoctorId != doctor.id:
-#         messages.error(request, "You are not authorized to approve this discharge.")
-#         return redirect('doctor-approve-discharge')
-
-#     # Check if the patient has any **future** appointments
-#     future_appointments = Appointment.objects.filter(
-#         patientId=patient.id,
-#         appointmentDate__gte=now().date(),  # Future or today’s appointment
-#         status=True  # Approved appointments only
-#     )
-
-#     if future_appointments.exists():
-#         messages.warning(request, "Discharge cannot be approved because the patient has upcoming appointments.")
-#         return redirect('doctor-approve-discharge')
-
-#     # ✅ Allow re-admission after discharge
-#     patient.discharge_status = True  # Mark as discharged
-#     patient.re_admit = False  # Reset re-admit status
-#     patient.status = True  # Allow them to log in and book new appointments
-#     patient.payment_done = False  # Ensure new payment is required for the next discharge
-#     patient.save()
-
-#     messages.success(request, "Patient discharge approved successfully. They can now book new appointments.")
-#     return redirect('doctor-approve-discharge')
+    return render(request, 'approve_discharge.html', {'form': form, 'patient': patient})
 
 #-----------------------------------------doctor end -------------------------------------------------------------------------#
 #----------------------------------------- patient start -------------------------------------------------------------------------#
@@ -1357,38 +1214,6 @@ from django.http import HttpResponseRedirect
 from django.utils.timezone import now
 from django.contrib import messages
 from . import forms, models
-
-# @login_required(login_url='patientlogin')
-# @user_passes_test(is_patient)
-# def patient_book_appointment_view(request):
-#     appointmentForm = forms.PatientAppointmentForm()
-#     patient = models.Patient.objects.get(user_id=request.user.id)
-
-#     if request.method == 'POST':
-#         appointmentForm = forms.PatientAppointmentForm(request.POST)
-#         if appointmentForm.is_valid():
-#             doctor = appointmentForm.cleaned_data['doctorId']  # Fetch doctor object
-#             appointmentDate = appointmentForm.cleaned_data['appointmentDate']
-#             time_slot = appointmentForm.cleaned_data['time_slot']
-
-#             # Ensure only future appointments
-#             if appointmentDate < now().date():
-#                 messages.error(request, "You cannot book an appointment for a past date.")
-#             elif models.Appointment.objects.filter(doctorId=doctor.id, appointmentDate=appointmentDate, time_slot=time_slot).exists():
-#                 messages.error(request, "This time slot is already booked. Please choose another one.")
-#             else:
-#                 appointment = appointmentForm.save(commit=False)
-#                 appointment.doctorId = doctor.id  # Store doctor ID as integer
-#                 appointment.patientId = patient.id  # Fix: Store Patient model's ID
-#                 appointment.doctorName = doctor.user.first_name  # Store doctor's name separately
-#                 appointment.patientName = patient.user.first_name
-#                 appointment.status = False  # Set status as pending
-#                 appointment.save()
-
-#                 messages.success(request, "Appointment request submitted successfully!")
-#                 return HttpResponseRedirect('patient-view-appointment')
-
-#     return render(request, 'patient_book_appointment.html', {'appointmentForm': appointmentForm, 'patient': patient})
 
 @login_required(login_url='patientlogin')
 @user_passes_test(is_patient)
@@ -1457,55 +1282,25 @@ def patient_view_appointment_view(request):
     ).exclude(description__startswith="Appointment booked during signup")
     
     return render(request, 'patient_view_appointment.html', {'appointments': appointments, 'patient': patient})
-
-
-# @login_required(login_url='patientlogin')
-# @user_passes_test(is_patient)
-# def patient_discharge_view(request):
-#     patient=models.Patient.objects.get(user_id=request.user.id) #for profile picture of patient in sidebar
-#     dischargeDetails=models.PatientDischargeDetails.objects.all().filter(patientId=patient.id).order_by('-id')[:1]
-#     patientDict=None
-#     if dischargeDetails:
-#         patientDict ={
-#         'is_discharged':True,
-#         'patient':patient,
-#         'patientId':patient.id,
-#         'patientName':patient.get_name,
-#         'assignedDoctorName':dischargeDetails[0].assignedDoctorName,
-#         'address':patient.address,
-#         'mobile':patient.mobile,
-#         'symptoms':patient.symptoms,
-#         'admitDate':patient.admitDate,
-#         'releaseDate':dischargeDetails[0].releaseDate,
-#         'daySpent':dischargeDetails[0].daySpent,
-#         'medicineCost':dischargeDetails[0].medicineCost,
-#         'roomCharge':dischargeDetails[0].roomCharge,
-#         'doctorFee':dischargeDetails[0].doctorFee,
-#         'OtherCharge':dischargeDetails[0].OtherCharge,
-#         'total':dischargeDetails[0].total,
-#         }
-#         print(patientDict)
-#     else:
-#         patientDict={
-#             'is_discharged':False,
-#             'patient':patient,
-#             'patientId':request.user.id,
-#         }
-#     return render(request,'patient_discharge.html',context=patientDict)
 @login_required(login_url='patientlogin')
 def patient_discharge_view(request):
     patient = get_object_or_404(Patient, user_id=request.user.id)
     dischargeDetails = PatientDischargeDetails.objects.filter(patientId=patient.id).order_by('-id')[:1]
 
+    # Fetching Lab Test Details for the patient
+    lab_tests = LabTestBooking.objects.filter(patient=patient)
+
     patientDict = {
         'is_discharged': bool(dischargeDetails),
         'patient': patient,
         'patientId': patient.id,
+        'lab_tests': lab_tests, 
+         'payment_done': patient.payment_done,  # Add lab test details to the context
     }
 
     if dischargeDetails:
         details = dischargeDetails[0]
-        prescribed_medicines = json.loads(details.prescribed_medicines) if details.prescribed_medicines else []
+        prescribed_medicines = models.Prescription.objects.filter(patient=patient)
 
         patientDict.update({
             'patientName': details.patientName,
@@ -1517,6 +1312,7 @@ def patient_discharge_view(request):
             'releaseDate': details.releaseDate,
             'daySpent': details.daySpent,
             'medicineCost': details.medicineCost,
+            'LabCost': details.total_lab_cost,
             'roomCharge': details.roomCharge,
             'doctorFee': details.doctorFee,
             'OtherCharge': details.OtherCharge,
@@ -1526,39 +1322,15 @@ def patient_discharge_view(request):
 
     return render(request, 'patient_discharge.html', context=patientDict)
 
+@login_required(login_url='patientlogin')
+def view_lab_report(request, patientId):
+    patient = get_object_or_404(models.Patient, id=pk)
+    lab_reports = models.LabTestBooking.objects.filter(patient=patient, report_url__isnull=False)
+    return render(request, 'view_lab_report.html', {'lab_reports': lab_reports})
+
+
 #------------------------ PATIENT RELATED VIEWS END ------------------------------
 #---------------------------------------------------------------------------------
-
-
-# # Razorpay Payment Integration
-# def create_razorpay_order(request, pk):
-#     patient = get_object_or_404(Patient, id=pk)
-#     discharge_details = PatientDischargeDetails.objects.filter(patientId=pk).first()
-#     if not discharge_details:
-#         messages.error(request, "No billing details found for this patient.")
-#         return redirect("admin_discharge_patient_view")
-
-#     client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
-#     order_amount = discharge_details.total * 100
-#     order_currency = "INR"
-
-#     razorpay_order = client.order.create({
-#         "amount": order_amount,
-#         "currency": order_currency,
-#         "payment_capture": "1",
-#     })
-
-#     request.session["razorpay_order_id"] = razorpay_order["id"]
-#     request.session["razorpay_patient_id"] = pk
-
-#     context = {
-#         "razorpay_key": settings.RAZORPAY_KEY_ID,
-#         "order_id": razorpay_order["id"],
-#         "amount": order_amount,
-#         "patient": patient,
-#     }
-
-#     return render(request, "razorpay_payment.html", context)
 
 def create_razorpay_order(request, pk):
     patient = get_object_or_404(Patient, id=pk)
@@ -1571,7 +1343,7 @@ def create_razorpay_order(request, pk):
         return redirect("admin_discharge_patient_view")
 
     client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
-    order_amount = discharge_details.total * 100
+    order_amount = discharge_details.total*100
     order_currency = "INR"
 
     razorpay_order = client.order.create({
@@ -1588,6 +1360,7 @@ def create_razorpay_order(request, pk):
         "order_id": razorpay_order["id"],
         "amount": order_amount,
         "patient": patient,
+        "amount_in_rupees": order_amount / 100,
     }
 
     return render(request, "razorpay_payment.html", context)
@@ -1626,18 +1399,25 @@ def payment_success(request):
         return redirect("admin-discharge-patient")
 
 
-
 @login_required(login_url='patientlogin')
 @user_passes_test(is_patient)
 def patient_payment_history(request):
     """ View all past payments made by a patient """
     patient = get_object_or_404(Patient, user=request.user)
-    
+
     payment_history = PatientDischargeDetails.objects.filter(patientId=patient.id).order_by('-releaseDate')
+
+    # Add payment_done to each payment in the history, if available
+    for payment in payment_history:
+        try:
+            patient_record = Patient.objects.get(id=payment.patientId)
+            payment.payment_done = patient_record.payment_done
+        except Patient.DoesNotExist:
+            payment.payment_done = False # or None, or whatever default you want
 
     return render(request, "patient_payment_history.html", {
         "payment_history": payment_history,
-        "patient": patient  # ✅ Ensure patient is passed to template
+        "patient": patient
     })
 
 
@@ -1654,54 +1434,7 @@ from .models import ChatMessage
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-# from .models import ChatMessage, Doctor, Patient, User
 
-# @login_required
-# def chat_view(request):
-#     user = request.user
-
-#     if hasattr(user, 'patient'):
-#         # If the user is a patient, show only doctors in the chat list
-#         chat_users = User.objects.filter(doctor__isnull=False)
-#     elif hasattr(user, 'doctor'):
-#         # If the user is a doctor, show only their assigned patients in the chat list
-#         chat_users = User.objects.filter(patient__assignedDoctorId=user.id)
-#     else:
-#         chat_users = User.objects.none()  # If the user is not a patient or doctor, show no one
-    
-#     messages = ChatMessage.objects.filter(sender=user) | ChatMessage.objects.filter(receiver=user)
-#     messages = messages.order_by('timestamp')
-
-#     return render(request, 'chat.html', {'chat_users': chat_users, 'messages': messages})
-
-
-# # 💊 Medicine Prescription View
-# @login_required
-# def prescribe_medicine(request, patient_id):
-#     if request.method == 'POST':
-#         form = MedicinePrescriptionForm(request.POST)
-#         if form.is_valid():
-#             prescription = form.save(commit=False)
-#             prescription.patient_id = patient_id
-#             prescription.doctor = request.user.doctor
-#             prescription.save()
-#             return redirect('doctor-view-discharge-patient')
-#     else:
-#         form = MedicinePrescriptionForm()
-#     return render(request, 'prescribe_medicine.html', {'form': form})
-
-# # 🏥 Room Booking View
-# @login_required
-# def book_room(request):
-#     if request.method == 'POST':
-#         form = RoomBookingForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('room-booking-success')
-#     else:
-#         form = RoomBookingForm()
-    
-#     return render(request, 'book_room.html', {'form': form})
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -1709,37 +1442,27 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import ChatMessage
 from .models import Doctor, Patient, Appointment  # Import Appointment model
 import json
-
-# @login_required
-# def chat_view(request):
-#     """ Displays the chat page with filtered users """
-#     user = request.user
-#     chat_users = []
-
-#     if hasattr(user, 'patient'):
-#         chat_users = Doctor.objects.all()  # Patients can chat with all doctors
-#     elif hasattr(user, 'doctor'):
-#         doctor = user.doctor
-#         assigned_patients = Patient.objects.filter(assignedDoctorId=doctor.id)
-#         appointment_patients = Patient.objects.filter(id__in=Appointment.objects.filter(doctorId=doctor.id).values_list('patientId', flat=True))
-#         chat_users = assigned_patients.union(appointment_patients)  # Combine both patient groups
-
-#     return render(request, 'chat.html', {'chat_users': chat_users})
 @login_required
 def chat_view(request):
     """ Displays the chat page with filtered users """
     user = request.user
     chat_users = []
     
-    if hasattr(user, 'patient'):  # If user is a patient
-        chat_users = Doctor.objects.all()  # Patients can chat with all doctors
+    if hasattr(user, 'patient'):  
+        # Patients can chat with all doctors
+        chat_users = Doctor.objects.all()
         base_template = "patient_base.html"
-    elif hasattr(user, 'doctor'):  # If user is a doctor
+    
+    elif hasattr(user, 'doctor'):  
         doctor = user.doctor
         assigned_patients = Patient.objects.filter(assignedDoctorId=doctor.id)
-        appointment_patients = Patient.objects.filter(id__in=Appointment.objects.filter(doctorId=doctor.id).values_list('patientId', flat=True))
+        appointment_patients = Patient.objects.filter(
+            id__in=Appointment.objects.filter(doctorId=doctor.id).values_list('patientId', flat=True)
+        )
+        # Ensure unique list of patients using `union`
         chat_users = assigned_patients.union(appointment_patients)
         base_template = "doctor_base.html"
+    
     else:
         base_template = "base.html"
 
@@ -1765,7 +1488,6 @@ def chat_messages_view(request, receiver_id):
 
     messages = messages.order_by('timestamp')
     return JsonResponse({'messages': list(messages.values('message', 'timestamp'))})
-
 @csrf_exempt
 @login_required
 def send_message(request):
@@ -1788,11 +1510,16 @@ def send_message(request):
 
         elif hasattr(sender, 'doctor'):
             sender_doctor = sender.doctor
-            if receiver_patient and receiver_patient.assignedDoctorId == sender_doctor.id:
-                ChatMessage.objects.create(sender_doctor=sender_doctor, receiver_patient=receiver_patient, message=message_text)
-                return JsonResponse({"success": "Message sent successfully."})
-            else:
-                return JsonResponse({"error": "Doctors can only chat with their assigned patients."}, status=403)
+            if receiver_patient:
+                # Check if the patient is either assigned or has an appointment with the doctor
+                has_appointment = Appointment.objects.filter(doctorId=sender_doctor.id, patientId=receiver_patient.id).exists()
+                is_assigned = receiver_patient.assignedDoctorId == sender_doctor.id
+
+                if is_assigned or has_appointment:
+                    ChatMessage.objects.create(sender_doctor=sender_doctor, receiver_patient=receiver_patient, message=message_text)
+                    return JsonResponse({"success": "Message sent successfully."})
+                else:
+                    return JsonResponse({"error": "Doctors can only chat with their assigned patients or patients they have an appointment with."}, status=403)
 
     return JsonResponse({"error": "Invalid request."}, status=400)
 
@@ -1802,18 +1529,6 @@ def send_message(request):
 from .models import RoomBooking
 from .forms import RoomBookingForm
 
-# def book_room(request):
-#     if request.method == 'POST':
-#         form = RoomBookingForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('room-booking-success')
-#     else:
-#         form = RoomBookingForm()
-    
-#     return render(request, 'book_room.html', {'form': form})
-
-# 🏥 Room Booking View
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import RoomBookingForm
 from .models import RoomBooking
@@ -1942,3 +1657,244 @@ def delete_booking(request, booking_id):
     except Patient.DoesNotExist:
         messages.error(request, "Patient not found.")
         return redirect('room-booking-list')
+    
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import EmergencyAlert
+from .forms import EmergencyAlertForm
+
+@login_required
+def emergency_alert_view(request):
+    if request.method == 'POST':
+        form = EmergencyAlertForm(request.POST)
+        if form.is_valid():
+            alert = form.save(commit=False)
+            alert.patient = request.user.patient  # Link the alert to the patient
+            alert.save()
+            messages.success(request, "🚨 Emergency Alert Sent to Hospital Staff!")
+            return redirect('patient-dashboard')  # Redirect to patient dashboard
+    else:
+        form = EmergencyAlertForm()
+    
+    return render(request, 'emergency_alert.html', {'form': form})
+@login_required
+def view_emergency_alerts(request):
+    if request.user.is_staff:  # Only allow staff/admin to view alerts
+        alerts = EmergencyAlert.objects.filter(is_resolved=False).order_by('-timestamp')
+        return render(request, 'view_emergency_alerts.html', {'alerts': alerts})
+    else:
+        messages.error(request, "Unauthorized Access!")
+        return redirect('home')
+from django.shortcuts import get_object_or_404
+
+@login_required
+def resolve_alert(request, alert_id):
+    if request.user.is_staff:
+        alert = get_object_or_404(EmergencyAlert, id=alert_id)
+        alert.is_resolved = True
+        alert.save()
+        messages.success(request, "✅ Emergency alert resolved.")
+        return redirect('view-emergency-alerts')
+    else:
+        messages.error(request, "Unauthorized Access!")
+        return redirect('home')
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import AmbulanceBooking
+from .forms import AmbulanceBookingForm
+
+@login_required
+def request_ambulance(request):
+    if request.method == "POST":
+        form = AmbulanceBookingForm(request.POST)
+        if form.is_valid():
+            booking = form.save(commit=False)
+            booking.patient = request.user.patient
+            booking.save()
+            return redirect('ambulance_status')
+    else:
+        form = AmbulanceBookingForm()
+    return render(request, 'request_ambulance.html', {'form': form})
+
+@login_required
+def ambulance_status(request):
+    bookings = AmbulanceBooking.objects.filter(patient=request.user.patient)
+    return render(request, 'ambulance_status.html', {'bookings': bookings})
+@login_required
+def manage_ambulance_requests(request):
+    bookings = AmbulanceBooking.objects.all()
+    return render(request, 'manage_ambulance_requests.html', {'bookings': bookings})
+@login_required
+def update_ambulance_status(request, booking_id, status):
+    booking = AmbulanceBooking.objects.get(id=booking_id)
+    booking.status = status
+    booking.save()
+    return redirect('manage_ambulance_requests')
+from django.shortcuts import render, redirect
+from .forms import LabTestBookingForm
+from .models import LabTestBooking
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .models import LabTestBooking, LabTestPrescription
+from .forms import LabTestBookingForm
+
+@login_required(login_url='patientlogin')
+def book_lab_test(request):
+    patient = request.user.patient
+    prescriptions = LabTestPrescription.objects.filter(patient=patient)
+
+    # Remove prescriptions that were already used in session
+    used_prescriptions = request.session.get('used_prescriptions', [])
+
+    if request.method == "POST":
+        form = LabTestBookingForm(request.POST)
+        if form.is_valid():
+            lab_test = form.save(commit=False)
+            lab_test.patient = patient
+            lab_test.save()
+
+            # Mark prescription as used in session (but not deleting from DB)
+            used_prescriptions.append(lab_test.test_name)
+            request.session['used_prescriptions'] = used_prescriptions
+
+            return redirect('book_lab_test')
+
+    else:
+        form = LabTestBookingForm()
+
+    return render(request, 'book_lab_test.html', {
+        'form': form,
+        'prescriptions': [p for p in prescriptions if p.test_name not in used_prescriptions]
+    })
+
+from .forms import LabTestPrescriptionForm
+from django.utils import timezone
+
+from django.shortcuts import render, redirect
+from django.utils import timezone
+from django.contrib.auth.decorators import login_required
+from .models import Appointment, LabTestPrescription
+from .forms import LabTestPrescriptionForm
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from .models import Appointment, LabTestPrescription, Patient
+from .forms import LabTestPrescriptionForm
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from .models import Appointment, LabTestPrescription, Patient
+from .forms import LabTestPrescriptionForm
+
+@login_required(login_url='doctorlogin')
+def doctor_appointment_management(request):
+    doctor = request.user.doctor
+    current_time = timezone.now().date()  # Get today's date
+
+    # ✅ Get current and next appointments
+    current_appointment = Appointment.objects.filter(
+        doctorId=doctor.id, 
+        appointmentDate=current_time,
+        statuss='Pending'
+    ).order_by('time_slot').first()
+
+    next_appointment = Appointment.objects.filter(
+        doctorId=doctor.id, 
+        appointmentDate=current_time,
+        statuss='Pending'
+    ).order_by('time_slot')[1:]
+
+    # ✅ Initialize variables
+    current_patient = None
+    current_description = None  
+    lab_reports = []  # Store available lab reports
+
+    if current_appointment:
+        try:
+            current_patient = Patient.objects.get(id=current_appointment.patientId)
+        except Patient.DoesNotExist:
+            current_patient = None  
+
+        # ✅ If description is "Appointment booked during signup", use `symptoms` from Patient
+        if current_appointment.description.strip().lower() == "appointment booked during signup" and current_patient:
+            current_description = current_patient.symptoms
+        else:
+            current_description = current_appointment.description
+
+        # ✅ Fetch available lab test reports for this patient
+        if current_patient:
+            lab_reports = LabTestBooking.objects.filter(patient=current_patient, report__isnull=False)
+
+    if request.method == "POST" and current_appointment:
+        form = LabTestPrescriptionForm(request.POST)
+        if form.is_valid():
+            prescription = form.save(commit=False)
+            prescription.doctor = doctor
+            prescription.patient_id = current_appointment.patientId  
+            prescription.save()
+
+            # ✅ Update appointment status to "Completed"
+            current_appointment.statuss = "Completed"
+            current_appointment.save()
+
+            return redirect('doctor-appointment-management')
+
+    else:
+        form = LabTestPrescriptionForm()
+
+    return render(request, 'doctor_appointment_management.html', {
+        'current_appointment': current_appointment,
+        'current_patient': current_patient,
+        'current_description': current_description,
+        'next_appointment': next_appointment,
+        'form': form,
+        'lab_reports': lab_reports  # ✅ Send lab reports to the template
+    })
+
+
+@login_required
+def view_booked_tests(request):
+    if request.user.is_staff:  # Only admin/doctor can view booked tests
+        booked_tests = LabTestBooking.objects.all()
+        return render(request, 'view_booked_tests.html', {'booked_tests': booked_tests})
+    else:
+        return redirect('patient-dashboard')  # Restrict non-admins
+@login_required
+def upload_lab_report(request, test_id):
+    if request.user.is_staff:  # Only doctors/admins can upload reports
+        test = LabTestBooking.objects.get(id=test_id)
+        if request.method == "POST" and request.FILES.get('report'):
+            test.report = request.FILES['report']
+            test.save()
+        return redirect('view_booked_tests')
+    else:
+        return redirect('patient-dashboard')  # Restrict access
+@login_required(login_url='patientlogin')
+def view_lab_report(request, patientId):
+    patient = get_object_or_404(Patient, id=patientId)
+    lab_reports = LabTestBooking.objects.filter(patient=patient)
+
+    return render(request, 'view_lab_report.html', {'lab_reports': lab_reports})
+
+@login_required(login_url='patientlogin')
+def ambulance(request):
+    return render(request, 'patient_ambulance.html')
+
+@login_required(login_url='patientlogin')
+def labtest(request):
+    return render(request, 'patient_labtest.html')
+
+@login_required(login_url='patientlogin')
+def patient_lab_tests_view(request):
+    patient = request.user.patient
+
+    # Fetch all lab test bookings for the patient
+    lab_tests = models.LabTestBooking.objects.filter(patient=patient)
+
+    return render(request, 'patient_lab_tests.html', {'lab_tests': lab_tests})
+
